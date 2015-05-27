@@ -4,21 +4,21 @@
 
 if MECH.DO
     % Get the strain rate
-    MECH = get_strain_rate(FSTD,MECH,EXFORC);
+    get_strain_rate;
     
 end
 
 if THERMO.DO
     
     % Get the thermodynamic forcing
-    [EXFORC,OCEAN] = get_thermo_forcing(FSTD,OPTS,THERMO,EXFORC,OCEAN);
+    get_thermo_forcing;
     
 end
 
 if SWELL.DO
     
     % Get the sea state
-    SWELL = get_sea_state(FSTD,SWELL,EXFORC);
-    SWELL = get_atten_dist(FSTD,OPTS,SWELL); 
+    get_sea_state;
+    get_atten_dist; 
 
 end

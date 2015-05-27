@@ -32,8 +32,6 @@ OCEAN = struct();
 DIAG = struct(); 
 EXFORC = struct(); 
 
-
-
 [FSTD,OPTS,THERMO,MECH,SWELL,DIAG,EXFORC,OCEAN] = Set_Run_Variables(FSTD,OPTS,THERMO,MECH,SWELL,DIAG,EXFORC,OCEAN) ;
 
 %% Actually Run the Model

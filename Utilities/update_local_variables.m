@@ -1,11 +1,6 @@
-function update_local_variables
 %% Update_local_variables
 % This timestep updates all variables that change on the order of one
 % timestep and are not reset, mostly counting variables
-
-global FSTD
-global OPTS
-global DIAG
 
 % Marginal Distributions
 FSTD.FSD = sum(FSTD.psi,2);

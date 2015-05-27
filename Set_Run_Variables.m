@@ -27,7 +27,7 @@ FSTD.H = .1:OPTS.dh:2.5;
 
 %% Just get the basic fields we need
 OPTS.first_init = 1;
-Initialize_FD; 
+[FSTD,OPTS,THERMO,MECH,SWELL,DIAG,EXFORC,OCEAN] = Initialize_FD(FSTD,OPTS,THERMO,MECH,SWELL,DIAG,EXFORC,OCEAN); 
 
 
 %% Which Processes Will Be Used?
@@ -85,4 +85,4 @@ FSTD.psi = .9*psi/sum(psi(:));
 
 
 %% Initialize all variables, keeping the options we have initialized
-Initialize_FD; 
+[FSTD,OPTS,THERMO,MECH,SWELL,DIAG,EXFORC,OCEAN] = Initialize_FD(FSTD,OPTS,THERMO,MECH,SWELL,DIAG,EXFORC,OCEAN)
