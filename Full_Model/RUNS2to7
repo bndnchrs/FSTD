@@ -1,0 +1,27 @@
+
+                            < M A T L A B (R) >
+                  Copyright 1984-2014 The MathWorks, Inc.
+                    R2014a (8.3.0.532) 64-bit (glnxa64)
+                             February 11, 2014
+
+ 
+To get started, type one of these: helpwin, helpdesk, or demo.
+For product information, visit www.mathworks.com.
+ 
+>> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> >> Running Run SavedOutput/Full_Runs/FullModel 
+INITIALIZING MAIN MODEL 
+INITIALIZING MECHANICS 
+Was able to find an interaction scheme matching the initial conditions 
+INITIALIZING THERMODYNAMICS 
+INITIALIZING SWELL FRACTURE 
+INITIALIZING DIAGNOSTICS 
+{Error using FD_timestep_mech_2 (line 132)
+Creating Volume, In > Out
+
+Error in FD_timestep (line 27)
+        FD_timestep_mech_2;
+
+Error in FD_Run (line 31)
+        FD_timestep;
+} 
+>> 

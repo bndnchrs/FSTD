@@ -1,0 +1,9 @@
+%% check_ridge_out
+% does not allow us to continue if any of our interactions lead to either a
+% loss in Volume or a gain in area. 
+
+
+
+
+end
+
