@@ -1,17 +1,18 @@
+function update_global_variables
 %% update_global_variables
 % This routine updates the variables that change each large-scale timestep.
 % This includes the making of diagnostic data
 
-psi; 
+global FSTD
 
-A_max = sum(psi(:,end));
+FSTD.A_max = sum(FSTD.psi(:,end));
 
-if A_max > eps
-    H_max = V_max / A_max;
+if FSTD.A_max > eps
+    FSTD.H_max = FSTD.V_max / FSTD.A_max;
 else
-    H_max = H_max_i;
+    FSTD.H_max = FSTD.H_max_i;
 end
 
-if isnan(A_max)
-    H_max = H_max_i; 
+if isnan(FSTD.A_max)
+    FSTD.H_max = FSTD.H_max_i; 
 end

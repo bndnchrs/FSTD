@@ -1,46 +1,56 @@
+function reset_local_variables
+
+global OPTS
+global FSTD
+global THERMO
+global MECH
+global SWELL
+global DIAG
+
+
 %% reset_local_variables
 % This code handles the resetting of matrices which are updated during each
 % sub-timestep.
 
-psi;
-
-if do_FD == 1
+if FSTD.DO
    
-   diff_FD = 0*diff_FD; 
-   opening = 0*opening; 
-   V_max = sum(psi(:,end))*H_max;
-   numfloes = psi./(meshR.^2);
-   V_max_in = 0;
-   V_max_out= 0; 
+   FSTD.diff = 0*FSTD.diff; 
+   FSTD.opening = 0*FSTD.opening; 
+   FSTD.V_max = sum(FSTD.psi(:,end))*FSTD.H_max;
+   FSTD.NumberDist = FSTD.psi./(FSTD.meshR.^2);
+   FSTD.V_max_in = 0;
+   FSTD.V_max_out= 0; 
    
    
 end
 
+%%
 
-if do_Mech == 1
+
+if MECH.DO
     
     % Large-Scale In and Out matrices
-    In = 0*In;
-    Out = 0*Out;
+    MECH.In = 0*MECH.In;
+    MECH.Out = 0*MECH.Out;
     
     % Variables related to the changes from single processes
-    In_ridge = In;
-    In_raft = In;
-    Out_ridge = Out;
-    Out_raft = Out;
-    Out_max_ridge = zeros(length(R),1);
-    Out_max_raft = Out_max_ridge;
-    In_max_ridge = Out_max_ridge;
-    In_max_raft = Out_max_ridge;
-    In_max = In_max_raft;
-    Out_max = Out_max_raft;
+    MECH.In_ridge = MECH.In;
+    MECH.In_raft = MECH.In;
+    MECH.Out_ridge = MECH.Out;
+    MECH.Out_raft = MECH.Out;
+    MECH.Out_max_ridge = zeros(length(FSTD.R),1);
+    MECH.Out_max_raft = MECH.Out_max_ridge;
+    MECH.In_max_ridge = MECH.Out_max_ridge;
+    MECH.In_max_raft = MECH.Out_max_ridge;
+    MECH.In_max = MECH.In_max_raft;
+    MECH.Out_max = MECH.Out_max_raft;
     
 end
 
-if do_Swell == 1
+if SWELL.DO
     
-    In_Swell = 0*In_Swell;
-    Out_Swell = 0*Out_Swell; 
+    SWELL.In = 0*SWELL.In;
+    SWELL.Out = 0*SWELL.Out; 
     
 end
 

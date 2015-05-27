@@ -1,5 +1,10 @@
-function du_out = advect2_upwind(c,x,y,vx,vy,dt)
+function [du_out,lossl,lossu] = advect2_upwind(c,x,y,vx,vy,dt,flagxcorr,flagycorr)
 %% advect2_upwind(psi,R,[H H_max],v_r,v_h,dt_sub)
+
+if nargin < 7
+    flagxcorr = 0; 
+    flagycorr = 0; 
+end
 
 nx = length(x);
 ny = length(y);
@@ -38,15 +43,15 @@ C(3:end-2,3:end-2) = c;
 VX(3:end-2,3:end-2) = vx; 
 VY(3:end-2,3:end-2) = vy; 
 
-vxpos = sign(sum(vx(:))); 
-vypos = sign(sum(vy(:))); 
+vxpos = sign(VX); 
+vypos = sign(VY); 
 
 du = zeros(size(C));
 %%
 for i = 2:nx+3
     for j = 2:ny+3
         
-        if vxpos > 0
+        if vxpos(i,j) > 0
             du(i,j) = du(i,j) - abs(VX(i,j)/DX(i))*C(i,j); 
             du(i+1,j) = du(i+1,j) + abs(VX(i,j)/DX(i))*C(i,j); 
         else
@@ -54,7 +59,7 @@ for i = 2:nx+3
             du(i-1,j) = du(i-1,j) + abs(VX(i,j)/DX(i))*C(i,j); 
         end
         
-        if vypos > 0
+        if vypos(i,j) > 0
             du(i,j) = du(i,j) - abs(VY(i,j)/DY(j))*C(i,j); 
             du(i,j+1) = du(i,j+1) + abs(VY(i,j)/DY(j))*C(i,j); 
         else
@@ -67,4 +72,10 @@ end
 %%
 
 
-du_out = correctedge(du)*dt; 
+[du_out,lossl,lossu] = correctedge(du,flagxcorr,flagycorr); 
+
+du_out = du_out*dt; 
+lossl = lossl*dt; 
+lossu = lossu*dt; 
+
+end

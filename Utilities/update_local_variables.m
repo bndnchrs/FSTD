@@ -1,30 +1,37 @@
+function update_local_variables
 %% Update_local_variables
 % This timestep updates all variables that change on the order of one
 % timestep and are not reset, mostly counting variables
 
+global FSTD
+global OPTS
+global DIAG
+
 % Marginal Distributions
-FSD = sum(psi,2);
-ITD = sum(psi,1);
+FSTD.FSD = sum(FSTD.psi,2);
+FSTD.ITD = sum(FSTD.psi,1);
 
 % Time Step Related
 
 % How much time left to go in the timestep
-dt_sub = dt_sub - dt_temp;
+OPTS.dt_sub = OPTS.dt_sub - OPTS.dt_temp;
 
 % Our actual time
-timestepping = timestepping + dt_temp;
+OPTS.timestepping = OPTS.timestepping + OPTS.dt_temp;
 
 % Counter of sub-cycles, both per global timestep and in totality
-numSC = numSC + 1;
-totnum = totnum + 1;
+DIAG.numSC = DIAG.numSC + 1;
+OPTS.totnum = OPTS.totnum + 1;
 
 % How much volume belongs to the largest floe class.
-V_max = V_max + dt_temp*dV_max;
+FSTD.V_max = FSTD.V_max + OPTS.dt_temp*FSTD.dV_max;
 
-if abs(V_max) < eps && sum(ITD(1:end-1).*H) < eps
-    V_max = 0; 
-    H_max = HMSAVE(1); 
-    psi = 0*psi; 
+if abs(FSTD.V_max) < eps % && sum(FSTD.ITD(1:end-1).*FSTD.H) < eps
+    FSTD.V_max = 0; 
+    FSTD.H_max = FSTD.H_max_i;
+    if sum(FSTD.ITD(1:end-1).*FSTD.H) < eps
+    FSTD.psi = 0*FSTD.psi; 
+    end
 end
 
 % if do_Thermo == 1
@@ -33,11 +40,11 @@ end
 % end
 
 
-A_max = sum(psi(:,end));
+FSTD.A_max = sum(FSTD.psi(:,end));
 
 Ameps = 0;
 
-if A_max == 0
+if FSTD.A_max == 0
     
     Ameps = eps;
     
@@ -45,10 +52,10 @@ end
 
 % The top category thickness is simply the ratio of the volume to
 
-H_max = V_max / (Ameps + A_max);
+FSTD.H_max = FSTD.V_max / (Ameps + FSTD.A_max);
 
-if H_max == 0
-    H_max = HMSAVE(1); 
+if FSTD.H_max == 0
+    FSTD.H_max = FSTD.H_max_i; 
 end
 
 % if H_max < H_max_i

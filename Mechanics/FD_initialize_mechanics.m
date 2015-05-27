@@ -1,97 +1,95 @@
+function FD_initialize_mechanics
 %% FD_initialize_mechanics
+global FSTD
+global OPTS
+global MECH
 
-if exist('do_FD','var') && do_FD == 1
+if FSTD.DO
     
     %% Strain Rate
     
-    if ~exist('strain_tensor')
-        
-        strain_tensor = 0*(rand(2,2,1)-.5)*1e-6;
-        
+    if ~isfield('MECH','eps_I')
+        MECH.eps_I = -1e-7;
     end
     
-    if ~exist('eps_I','var')
-        eps_I = -1e-7;
+    if ~isfield('MECH','eps_I_0')
+        MECH.eps_I_0 = MECH.eps_I;
     end
     
-    if ~exist('eps_I_0','var')
-        eps_I_0 = eps_I;
+    if ~isfield('MECH','eps_II');
+        MECH.eps_II = 0;
     end
     
-    
-    
-    if ~exist('eps_II','var');
-        eps_II = 0;
+    if ~isfield('MECH','eps_II_0')
+        MECH.eps_II_0 = MECH.eps_II;
     end
     
-    if ~exist('eps_II_0','var')
-        eps_II_0 = eps_II;
+    if ~isfield('MECH','do_thorndike')
+        MECH.do_thorndike = 0;
     end
     
     
     % Whether rafting is turned on or not
-    if ~exist('rafting','var')
-        rafting = 1;
+    if ~isfield('MECH','rafting')
+        MECH.rafting = 1;
     end
     
     % Whether ridging is turned on or not
-    if ~exist('ridging','var')
-        ridging = 1;
+    if ~isfield('MECH','ridging')
+        MECH.ridging = 1;
     end
     
     if ~exist('r_raft','var')
         % Size of a raft
-        r_raft = 10;
+        MECH.r_raft = 10;
     end
     
-    if ~exist('r_ridge','var')
+    if ~isfield('MECH','r_ridge')
         % Size of a ridge
-        r_ridge = 5;
+        MECH.r_ridge = 5;
     end
     
-    if ~exist('k_ridge','var')
+    if ~isfield('MECH','k_ridge')
         % Thickness Increase Multiple
-        k_ridge = 5;
+        MECH.k_ridge = 5;
         
     end
     
-    if ~exist('H_raft','var')
+    if ~isfield('MECH','H_raft')
         % Size at which rafting is suppressed
-        H_raft = .3;
+        MECH.H_raft = .3;
     end
     
-    if ~exist('nu','var')
+    if ~isfield('MECH','nu')
         % Size at which rafting is suppressed
-        nu = zeros(nt,2);
-        nu(:,1) = eps_I;
-        nu(:,2) = eps_II;
+        MECH.nu = zeros(OPTS.nt,2);
+        MECH.nu(:,1) = MECH.eps_I;
+        MECH.nu(:,2) = MECH.eps_II;
         
     end
     
-    if ~exist('dont_guarantee_bigger','var')
-        
-        dont_guarantee_bigger=0;
+    if ~isfield('MECH','dont_guarantee_bigger')
+        MECH.dont_guarantee_bigger=0;
     end
     
-    if ~exist('use_old_interactions','var')
-        use_old_interactions = 0;
+    if ~isfield('MECH','use_old_interactions')
+        MECH.use_old_interactions = 0;
     end
     
     % Ridging and rafting matrices
-    gamma_raft = calc_gamma_raft_FD([H H_max],meshH,H_raft);
-    gamma_ridge = 1 - gamma_raft;
+    MECH.gamma_raft = calc_gamma_raft_FD([FSTD.H FSTD.H_max],FSTD.meshH,MECH.H_raft);
+    MECH.gamma_ridge = 1 - MECH.gamma_raft;
     
     
     % Interaction Matrices for Rafting
-    if exist('D4_Ridging','var') && D4_Ridging == 1
-        intstr = sprintf('./Mechanics/Interaction_Matrices_4D/nr%drm%dnh%dhm%drra%drri%dkri%d',nr,round(max(R)),nh,round(max(H)),r_raft,r_ridge,k_ridge);
+    if isfield('MECH','D4_Ridging') && MECH.D4_Ridging == 1
+        intstr = sprintf('./Mechanics/Interaction_Matrices_4D/nr%drm%dnh%dhm%drra%drri%dkri%d',OPTS.nr,round(max(FSTD.R)),OPTS.nh,round(max(FSTD.H)),MECH.r_raft,MECH.r_ridge,MECH.k_ridge);
         disp('4D_Ridging')
     else
-        intstr = sprintf('./Mechanics/Interaction_Matrices/nr%drm%dnh%dhm%drra%drri%dkri%d',nr,round(max(R)),nh,round(max(H)),r_raft,r_ridge,k_ridge);
-        
+        intstr = sprintf('./Mechanics/Interaction_Matrices/nr%drm%dnh%dhm%drra%drri%dkri%d',OPTS.nr,round(max(FSTD.R)),OPTS.nh,round(max(FSTD.H)),MECH.r_raft,MECH.r_ridge,MECH.k_ridge);
     end
     
-    if exist('use_old_interactions','var') && use_old_interactions == 1
+    if isfield('MECH','use_old_interactions') && MECH.use_old_interactions == 1
         
         intstr = [intstr 'old'];
         
@@ -101,7 +99,7 @@ if exist('do_FD','var') && do_FD == 1
         
     end
     
-    if exist('dont_guarantee_bigger','var') && dont_guarantee_bigger == 1
+    if isfield('MECH','dont_guarantee_bigger') && MECH.dont_guarantee_bigger == 1
         intstr = [intstr '_dgb'];
     end
     
@@ -110,38 +108,52 @@ if exist('do_FD','var') && do_FD == 1
         load(intstr)
         fprintf('Was able to find an interaction scheme matching the initial conditions \n')
         
+        MECH.S_R_raft = S_R_raft;
+        MECH.S_H_raft = S_H_raft;
+        MECH.Kfac_raft = Kfac_raft;
+        MECH.Prob_Interact_raft = Prob_Interact_raft;
+        
+        MECH.S_R_ridge = S_R_ridge;
+        MECH.S_H_ridge = S_H_ridge;
+        MECH.Kfac_ridge = Kfac_ridge;
+        MECH.Prob_Interact_ridge = Prob_Interact_ridge;
+                       
     catch errloading
         
         % Make sure the file didn't exist and it isn't something else
         
         if strcmp(errloading.identifier ,'MATLAB:load:couldNotReadFile')
             
-            if ~exist('rafting','var') || rafting == 1
+            if ~isfield('MECH','rafting') || MECH.rafting == 1
                 
-                rafting = 1;
+                MECH.rafting = 1;
                 
                 disp('Calculating Interaction Matrices for Rafting ...')
                 
-                if ~(exist('use_old_interactions','var') && use_old_interactions == 1)
+                if ~(isfield('MECH','use_old_interactions') && MECH.use_old_interactions == 1)
                     disp('Using the new method!')
                 end
                 
-                if exist('dont_guarantee_bigger','var') && dont_guarantee_bigger == 1
+                if isfield(MECH,'dont_guarantee_bigger') && MECH.dont_guarantee_bigger == 1
                     disp('Not guaranteeing bigger floes!')
                 end
                 
-                [S_R_raft,S_H_raft,Kfac_raft,Prob_Interact_raft] = ...
-                    calc_sizes_raft_FD(R,r_raft,A_tot,[H H_max],dont_guarantee_bigger,use_old_interactions);
+                [MECH.S_R_raft,MECH.S_H_raft,MECH.Kfac_raft,MECH.Prob_Interact_raft] = ...
+                    calc_sizes_raft_FD(FSTD.R,MECH.r_raft,OPTS.A_tot,[FSTD.H FSTD.H_max],MECH.dont_guarantee_bigger,MECH.use_old_interactions);
+                
+                S_R_raft = MECH.S_R_raft;
+                S_H_raft = MECH.S_H_raft;
+                Kfac_raft = MECH.Kfac_raft;
+                Prob_Interact_raft = MECH.Prob_Interact_raft;
                 
                 save(intstr,'S_R_*','S_H_*','Kfac*','Prob_Interact_*');
             end
             
             
-            
             % Interaction Matrices for Ridging
-            if ~exist('ridging','var') || ridging == 1
+            if ~isfield('MECH','ridging') || MECH.ridging == 1
                 
-                ridging = 1;
+                MECH.ridging = 1;
                 
                 disp('Calculating Interaction Matrices for Ridging ...')
                 
@@ -154,15 +166,26 @@ if exist('do_FD','var') && do_FD == 1
                 end
                 
                 if exist('D4_Ridging','var') && D4_Ridging == 1
-                    [S_R_ridge,S_H_ridge,Kfac_ridge,Prob_Interact_ridge] = ...
-                        calc_sizes_ridge_FD_2(R,A_tot,[H H_max],dont_guarantee_bigger,use_old_interactions);
+                    [MECH.S_R_ridge,MECH.S_H_ridge,MECH.Kfac_ridge,MECH.Prob_Interact_ridge] = ...
+                        calc_sizes_ridge_FD_2(FSTD.R,OPTS.A_tot,[FSTD.H FSTD.H_max],MECH.dont_guarantee_bigger,MECH.use_old_interactions);
+                    
+                    S_R_ridge = MECH.S_R_ridge; 
+                    S_H_ridge = MECH.S_H_ridge; 
+                    Kfac_ridge = MECH.Kfac_ridge; 
+                    Prob_Interact_ridge = MECH.Prob_Interact_ridge; 
                     
                     save(intstr,'S_R_*','S_H_*','Kfac*','Prob_Interact_*');
                     
                 else
                     
-                    [S_R_ridge,S_H_ridge,Kfac_ridge,Prob_Interact_ridge] = ...
-                        calc_sizes_ridge_FD(R,r_ridge,A_tot,k_ridge,[H H_max],dont_guarantee_bigger,use_old_interactions);
+                    [MECH.S_R_ridge,MECH.S_H_ridge,MECH.Kfac_ridge,MECH.Prob_Interact_ridge] = ...
+                        calc_sizes_ridge_FD(FSTD.R,MECH.r_ridge,OPTS.A_tot,MECH.k_ridge,[FSTD.H FSTD.H_max],MECH.dont_guarantee_bigger,MECH.use_old_interactions);
+                    
+                    S_R_ridge = MECH.S_R_ridge; 
+                    S_H_ridge = MECH.S_H_ridge; 
+                    Kfac_ridge = MECH.Kfac_ridge; 
+                    Prob_Interact_ridge = MECH.Prob_Interact_ridge; 
+                    
                     save(intstr,'S_R_*','S_H_*','Kfac*','Prob_Interact_*');
                     
                 end
@@ -177,21 +200,21 @@ if exist('do_FD','var') && do_FD == 1
         
     end
     
-    H_0 = integrate_FD(psi,[H H_max],1);
+    MECH.H_0 = integrate_FD(FSTD.psi,[FSTD.H FSTD.H_max],1);
     
-    if H_0 == 0
-        H_0 = h_p;
+    if MECH.H_0 == 0
+        MECH.H_0 = OPTS.h_p;
     end
     % Initial Pressure
-    P_0 = H_0*exp(-20*openwater);
+    MECH.P_0 = MECH.H_0*exp(-20*(1-FSTD.conc));
     
     %% Matrices involved in updating psi
-    In = zeros(length(R),length(H)+1);
-    In_raft = In;
-    In_ridge = In;
-    Out = In;
-    Out_raft = In;
-    Out_ridge = In;
+    MECH.In = zeros(length(FSTD.R),length(FSTD.H)+1);
+    MECH.In_raft = MECH.In;
+    MECH.In_ridge = MECH.In;
+    MECH.Out = MECH.In;
+    MECH.Out_raft = MECH.In;
+    MECH.Out_ridge = MECH.In;
     
     
 else

@@ -1,24 +1,34 @@
+function check_FD
 %% FD_Check
 % This routine checks for errors in the code. It also outputs required or
 % requested information to the command line.
+global FSTD
+global OPTS
 
-if H_max < 0
+
+if FSTD.H_max < 0
     error('Negative H')
 end
 
-if isnan(psi)
-    disp('NaNned out')
-    i
+if sum(FSTD.psi(:)) > 1
+    disp('Too much conc')
+    FSTD.i
     error(1)
 end
 
-if abs(opening + sum(diff_FD(:))) > eps
+if isnan(FSTD.psi)
+    disp('NaNned out')
+    FSTD.i
+    error(1)
+end
+
+if abs(FSTD.opening + sum(FSTD.diff(:))) > eps
     disp('Bad Opening/Closing')
     error(1)
 end
 
-if min(psi(:)) < 0
-    disp(i)
+if min(FSTD.psi(:)) < 0
+    disp(FSTD.i)
     error('Less Than Zero after cutting')
 end
 
@@ -37,17 +47,17 @@ end
 
 %% Plotting
 
-if mod(i,nt/10) == 0
+if mod(FSTD.i,OPTS.nt/10) == 0
     
-    fprintf('%d Percent Complete. %d timesteps. %d subcycles \n',round(100*i/nt),i,totnum)
+    fprintf('%d Percent Complete. %d timesteps. %d subcycles \n',round(100*FSTD.i/OPTS.nt),FSTD.i,OPTS.totnum)
     
 end
 
 
 
-if mod(i,year/dt) == 0
+if mod(FSTD.i,OPTS.year/OPTS.dt) == 0
     
-    fprintf('Year %d of %d \n',i*dt/year,round(nt*dt/year))
+    % fprintf('Year %d of %d \n',FSTD.i*OPTS.dt/OPTS.year,round(OPTS.nt*OPTS.dt/OPTS.year))
     % ITD = squeeze(sum(psi,1));
     % plot(log(ITD+eps));
     

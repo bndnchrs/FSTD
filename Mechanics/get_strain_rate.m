@@ -1,3 +1,9 @@
+function get_strain_rate
+
+global MECH
+global FSTD
+global EXFORC
+
 %% get_strain_rate
 % This routine pulls or creates the strain rate state at each large-scale
 % timestep, and assorted necessasry quantities.
@@ -21,37 +27,37 @@
 % end
 
 % Using Random-Walk timeseries
-eps_I = nu(i,1); 
-eps_II = nu(i,2); 
+MECH.eps_I = EXFORC.nu(FSTD.i,1); 
+MECH.eps_II = EXFORC.nu(FSTD.i,2); 
 
 % Example forced strain rate tensor
-Hmean = integrate_FD(psi,[H H_max],1);
+MECH.Hmean = integrate_FD(FSTD.psi,[FSTD.H FSTD.H_max],1);
 
-if Hmean == 0
-    Hmean = h_p;
+if MECH.Hmean == 0
+    MECH.Hmean = MECH.h_p;
 end
 
-if ~exist('dont_rescale_eps','var')
+if ~isfield(MECH,'dont_rescale_eps') || MECH.dont_rescale_eps == 0
     
-    eps_I = eps_I*(conc)*(H_0/Hmean);
-    eps_II = eps_II*(conc)*(H_0/Hmean);
+    MECH.eps_I = MECH.eps_I*(FSTD.conc)*(MECH.H_0/MECH.Hmean);
+    MECH.eps_II = MECH.eps_II*(FSTD.conc)*(MECH.H_0/MECH.Hmean);
     
 end
 
 %% This is for cases in which we want to turn off and on mech
-eps_I = eps_I * compressing(III,i); 
-eps_II = eps_II * compressing(III,i); 
+MECH.eps_I = MECH.eps_I * EXFORC.compressing(FSTD.i); 
+MECH.eps_II = MECH.eps_II * EXFORC.compressing(FSTD.i); 
 
 %%
 % Magnitude of Strain Rate Tensor
-mag = sqrt(eps_I^2 + eps_II^2);
+MECH.mag = sqrt(MECH.eps_I^2 + MECH.eps_II^2);
 % Ratio of Divergence to Strain
-theta = atan(eps_II/eps_I);
-costheta = eps_I/mag;
+costheta = MECH.eps_I/MECH.mag;
 
 % Opening and closing coefficients
-alpha_0 = .5*(1 + costheta);
-alpha_c = .5*(1 - costheta);
+MECH.alpha_0 = .5*(1 + costheta);
+MECH.alpha_c = .5*(1 - costheta);
 
 %%
-clear theta costheta 
+
+end

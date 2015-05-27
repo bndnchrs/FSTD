@@ -1,161 +1,156 @@
+function FD_initialize_FD
 %% FD_initialize_FD
 % This routine initializes the main floe distribution variables, including
 % the floe distribution itself and many of the diagnostics
 
+global OPTS %options files
+global FSTD % FSTD files
 %% Timestepping
 
 % Times
-hour = 3600; 
-day = 24*hour; 
-month = 30*day; 
-year = 365*day; 
+OPTS.hour = 3600; 
+OPTS.day = 24*OPTS.hour; 
+OPTS.month = 30*OPTS.day; 
+OPTS.year = 365*OPTS.day; 
 
 
-if ~exist('dt','var')
+if ~isfield(OPTS,'dt')
     % maximum time interval
-    dt = (1/8) * day; % s
+    OPTS.dt = (1/8) * OPTS.day; % s
     
 end
 
-if ~exist('nt','var')
+if ~isfield(OPTS,'nt')
     % number of timesteps
-    nt = round(15*year / dt);
+    OPTS.nt = round(15*OPTS.year / OPTS.dt);
     
 end
 
-if ~exist('start_it','var')
+if ~isfield(OPTS,'start_it')
     % Starting iteration
-    start_it = 1; 
+    OPTS.start_it = 1; 
 end
 
-if ~exist('end_it','var')
+if ~isfield(OPTS,'end_it')
     % Ending iteration
-    end_it = nt; 
+    OPTS.end_it = OPTS.nt; 
 end
 
 % Time Vector
-time = linspace(0,nt*dt,nt); %s
+FSTD.time = linspace(0,OPTS.nt*OPTS.dt,OPTS.nt); %s
 
 % Time in years
-T = time/year; 
+FSTD.T = FSTD.time/OPTS.year; 
 
 % Final Time
-tend = time(end); %s
+OPTS.tend = FSTD.time(end); %s
 
 % Same
-timestepping = 0;
+OPTS.timestepping = 0;
 
 % iteration number
-i = 1;
+FSTD.i = 1;
 
 % total number of iterations
-numsteps = 0;
+OPTS.numsteps = 0;
 
 % Total number of all iterations
-totnum = 0;
+OPTS.totnum = 0;
 
 
 
 
 %% Floe Size Distribution
 
-if ~exist('nr','var')
+if ~isfield(OPTS,'nr')
     % Number of Size Classes
-    nr = 10;
+    OPTS.nr = 10;
 end
 
-if ~exist('r_p','var')
+if ~isfield(FSTD,'r_p')
     % Pancake Size
-    r_p = .5; % m
+    OPTS.r_p = .5; % m
 end
 
-if ~exist('dr','var')
+if ~isfield(OPTS,'dr')
     % Size Increment
-    dr = 10*r_p; % m
+    OPTS.dr = 10*OPTS.r_p; % m
 end
 
-if ~exist('R','var')
+if ~isfield(FSTD,'R')
 % Vector of Sizes
-R = linspace(r_p,r_p + (nr-1)*dr,nr);
+FSTD.R = linspace(OPTS.r_p,OPTS.r_p + (OPTS.nr-1)*OPTS.dr,OPTS.nr);
 end
 
 %% Ice Thickness Distribution
 
-if ~exist('nh','var')
+if ~isfield(OPTS,'nh')
     % Number of Thickness Classes
-    nh = 10;
+    OPTS.nh = 10;
 end
 
-if ~exist('h_p','var')
+if ~isfield(OPTS,'h_p')
     % Pancake Thickness
-    h_p = .1; % m
+    OPTS.h_p = .1; % m
 end
 
-if ~exist('dh','var')
+if ~isfield(OPTS,'dh')
     % Thickness Increment
-    dh = 5*h_p; % m
+    OPTS.dh = 5*OPTS.h_p; % m
 end
 
 % Vector of Thickness
-H = linspace(h_p,h_p + (nh-1)*dh,nh); % m
+FSTD.H = linspace(OPTS.h_p,OPTS.h_p + (OPTS.nh-1)*OPTS.dh,OPTS.nh); % m
 
-if ~exist('H_max','var')
+if ~isfield(FSTD,'H_max')
     % Maximum Thickness
-    H_max = max(H) + dh; %m
+    FSTD.H_max = max(FSTD.H) + OPTS.dh; %m
     
-    if nh == 0
-        H_max = h_p; 
+    if OPTS.nh == 0
+        FSTD.H_max = OPTS.h_p; 
     end
 end
 
 % Initial Maximum Thickness
-H_max_i = H_max;
+FSTD.H_max_i = FSTD.H_max;
 
 % Area in Max Thickness
-A_max = 0;
+FSTD.A_max = 0;
 
-V_max_in = 0; 
-V_max_out = 0; 
+FSTD.V_max_in = 0; 
+FSTD.V_max_out = 0;
+FSTD.V_max = 0; 
 
 %% Dual Distribution
 
 % 2-D matrix of size, thickness, and volume
-[meshR,meshH] = meshgrid(R,[H H_max]);
-meshR = meshR';
-meshH = meshH';
-meshV = pi*meshR.^2 .* meshH;
+[FSTD.meshR,FSTD.meshH] = meshgrid(FSTD.R,[FSTD.H FSTD.H_max]);
+FSTD.meshR = FSTD.meshR';
+FSTD.meshH = FSTD.meshH';
+FSTD.meshV = pi*FSTD.meshR.^2 .* FSTD.meshH;
 
-if ~exist('psi','var')
+if ~isfield(FSTD,'psi')
     
     % Floe Distribution
-    psi = zeros(length(R),length(H)+1);
+    FSTD.psi = zeros(length(FSTD.R),length(FSTD.H)+1);
     
 end
 
 % Updating variables
 
-diff_FD = 0*psi;
+FSTD.diff = 0*FSTD.psi;
 
-opening = 0;
+FSTD.opening = 0;
 
-numfloes = psi./(pi*meshR.^2);
-
-% Largest Thickness Category
-FSD_thick = zeros(nr,1);
-
-% Initial marginal distributions
-ITD = sum(psi,1);
-FSD = sum(psi,2);
+FSTD.NumberDist = FSTD.psi./(pi*FSTD.meshR.^2);
 
 % Open Water and Ice Concentration
-openwater = 1 - sum(sum(psi));
-conc = sum(sum(psi));
+FSTD.phi = 1 - sum(sum(FSTD.psi));
+FSTD.conc = sum(sum(FSTD.psi));
 
-if ~exist('A_tot','var')
+if ~isfield(OPTS,'A_tot')
     % Domain Area and Radius
-    A_tot = 1e4*1e4;
-    r_tot = sqrt(A_tot);
+    OPTS.A_tot = 1e4*1e4;
+    OPTS.r_tot = sqrt(OPTS.A_tot);
 end
-
-%
 

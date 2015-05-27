@@ -1,3 +1,8 @@
+function update_grid
+
+global FSTD
+global MECH
+
 % This routing updates the grids which contain the details of the largest
 % floe size as well as the ridging/rafting coefficients, and the volume of
 % each floe category. It is updated at each timestep to reflect the changes
@@ -7,15 +12,16 @@
 % Since it doesn't take too much computing time, we will do it each
 % timestep anyways. Consider for refining later.
 
-[meshR,meshH] = meshgrid(R,[H H_max]);
-meshR = meshR';
-meshH = meshH';
-meshV = pi*meshR.^2 .* meshH;
+[meshR,meshH] = meshgrid(FSTD.R,[FSTD.H FSTD.H_max]);
+FSTD.meshR = meshR';
+FSTD.meshH = meshH';
+FSTD.meshV = pi*meshR.^2 .* meshH;
 
-if do_Mech == 1
+if MECH.DO
     
-    gamma_ridge = calc_gamma_ridge_FD([H H_max],meshH,H_raft);
-    gamma_raft = 1 - gamma_ridge;
+    MECH.gamma_ridge = calc_gamma_ridge_FD([FSTD.H FSTD.H_max],meshH, MECH.H_raft);
+    MECH.gamma_raft = 1 -  MECH.gamma_ridge;
     
 end
 
+end

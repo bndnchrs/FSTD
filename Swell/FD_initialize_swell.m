@@ -1,33 +1,43 @@
+function FD_initialize_swell
 %% FD_initialize_swell
 % This routine initializes the swell fracture code
-
+global FSTD
+global OPTS
+global SWELL
 %% Initialize Main Swell Variables
 
-if ~exist('nP','var')
-    nP = 500; % Number of Wave Period Bins
+if ~isfield(SWELL,'nP')
+    SWELL.nP = 500; % Number of Wave Period Bins
 end
 
 g = 9.81; 
 
-if ~exist('Per','var')
+if ~isfield(SWELL,'Per')
 
     % Unless pre-defined, we choose the exact period bins so that each
     % wavelength will fracture into one and only one radius bin
-    Per = (4*pi*R/g).^(1/2);
-    
-    
+    SWELL.Per = (4*pi*FSTD.R/g).^(1/2);
+     
 end
 
-Lambda = Per.^(2)*g/(2*pi);
+if ~isfield(SWELL,'H_s')
+    SWELL.H_s = 2; % Significant Wave Height
+end
 
-if ~exist('Domainwidth','var')
+if ~isfield(SWELL,'P_z')
+    SWELL.P_z = 6; % Zero-crossing period
+end
+
+SWELL.Lambda = SWELL.Per.^(2)*g/(2*pi);
+
+if ~isfield(OPTS,'Domainwidth')
 
    % This is the width of the grid cell, for wave propagation
-   Domainwidth = 1e1*1e3; % 1 kilometers
+   OPTS.Domainwidth = 1e1*1e3; % 1 kilometers
 
 end
 
-if exist('Do_interp_atten','var') && Do_interp_atten 
+if isfield(SWELL,'Do_interp_atten') && SWELL.Do_interp_atten 
     
     load('Swell/interp_coeff')
     
@@ -37,21 +47,23 @@ end
 % Vector of wave periods
 % Per = linspace(minP,maxP,nP);
 
-dP = [Per(1) diff(Per)];
+SWELL.dP = [SWELL.Per(1) diff(SWELL.Per)];
 
 % Calculate the outgoing
-gamma_swell = calc_out_swell_FD(Per,R);
+SWELL.gamma_swell = calc_out_swell_FD(SWELL.Per,FSTD.R);
 
-if ~exist('epscrit','var')
+if ~isfield(SWELL,'epscrit')
 % The critical strain rate
-epscrit = 3e-5;
+SWELL.epscrit = 3e-5;
 end
 
-if ~exist('tau_swell','var')
+if ~isfield(SWELL,'tau_swell')
 % Wave fracture timescale
-tau_swell = 10;
+SWELL.tau_swell = 10;
 end
 
 %% Matrices for Handling In and Out
-In_Swell = 0*psi;
-Out_Swell = 0*psi;
+SWELL.In = 0*FSTD.psi;
+SWELL.Out = 0*FSTD.psi;
+
+end

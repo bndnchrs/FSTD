@@ -1,3 +1,14 @@
+function FD_timestep
+
+global OPTS
+global FSTD
+global THERMO
+global MECH
+global SWELL
+global OCEAN
+global DIAG
+global EXFORC
+
 % This code executes a single predefined timestep of the joint model by
 % performing a greedy-minimum number of sub-cycles
 
@@ -12,31 +23,33 @@ reset_global_variables;
 
 
 %% Actual Sub Timestep
-while dt_sub > 0
+while OPTS.dt_sub > 0
     
     %% Reset all variables that are only relevant for one sub-cycle
     reset_local_variables; 
     
     %% Get Change Due To Mechanics
     
-    if do_Mech == 1 && mag ~= 0
+    if MECH.DO && MECH.mag ~= 0
         
-        if exist('do_Thorndike','var') && do_Thorndike
+        if MECH.do_thorndike
             Thorndike_timestep; 
         else
-        FD_timestep_mech_2;
+            
+        FD_timestep_mech;
+ 
         end
         
-        diff_FD = diff_FD + diff_mech; 
-        opening = opening + opening_mech; 
-        V_max_in = V_max_in + V_max_in_mech; 
-        V_max_out = V_max_out + V_max_out_mech; 
+        FSTD.diff = FSTD.diff + MECH.diff; 
+        FSTD.opening = FSTD.opening + MECH.opening; 
+        FSTD.V_max_in = FSTD.V_max_in + MECH.V_max_in; 
+        FSTD.V_max_out = FSTD.V_max_out + MECH.V_max_out; 
         
     end
     
     %% Get Change Due To Thermodynamics
     
-    if do_Thermo == 1 
+    if THERMO.DO
         
         % This outputs diff_thermo
     
@@ -45,34 +58,55 @@ while dt_sub > 0
         else
             FD_timestep_thermo;
         end
-        diff_FD = diff_FD + diff_thermo; 
-        opening = opening + opening_thermo; 
-        V_max_in = V_max_in + V_max_in_thermo; 
-        V_max_out = V_max_out + V_max_out_thermo; 
+        FSTD.diff = FSTD.diff + THERMO.diff; 
+        FSTD.opening = FSTD.opening + THERMO.opening; 
+        FSTD.V_max_in = FSTD.V_max_in + THERMO.V_max_in; 
+        FSTD.V_max_out = FSTD.V_max_out + THERMO.V_max_out; 
       
     end
     
     %% Get Change Due to Swell
     
-    if do_Swell == 1 && stormy(III,i) == 1
+    if SWELL.DO == 1 && EXFORC.stormy(FSTD.i)
         
         FD_timestep_swell; 
-        diff_FD = diff_FD + diff_swell;
-        V_max_in = V_max_in + V_max_in_swell; 
-        V_max_out = V_max_out + V_max_out_swell; 
+        FSTD.diff = FSTD.diff + SWELL.diff;
+        FSTD.V_max_in = FSTD.V_max_in + SWELL.V_max_in; 
+        FSTD.V_max_out = FSTD.V_max_out + SWELL.V_max_out; 
     
     end
         
-    dV_max = V_max_in - V_max_out; 
+    %%
+    FSTD.dV_max = FSTD.V_max_in - FSTD.V_max_out; 
     
-    %% Calculate Changes Due to Interaction
+    % Calculate Changes Due to Interaction
 
     %% Minimal Timestep
     % Calculate the maximal timestep possible to keep the solution legal    
-    dt_temp = calc_max_timestep(psi,diff_FD,dt_sub);
-
+    OPTS.dt_temp = calc_max_timestep(FSTD.psi,FSTD.diff,OPTS.dt_temp);
+    
     %%
-    dt_temp = calc_max_timestep(V_max,dV_max(end,end),dt_temp,1);
+    OPTS.dt_temp = calc_max_timestep(FSTD.V_max,FSTD.dV_max(end,end),OPTS.dt_temp,1);
+    
+    %% 
+    
+    if OCEAN.DO
+        
+        timestep_ocean;        
+        
+        % From pancake growth
+        % We keep the same timestep here: will this be a problem later?
+        FSTD.diff = FSTD.diff + OCEAN.diff; 
+        FSTD.opening = FSTD.opening + OCEAN.opening; 
+        FSTD.V_max_in = FSTD.V_max_in + OCEAN.V_max_in; 
+       
+        update_ocean; 
+                
+    
+    end
+    
+  
+        
     
     %% Update the main variables psi and openwater
     update_psi;
@@ -81,6 +115,7 @@ while dt_sub > 0
     %% Update those local variables which will change on each timestep
     update_local_variables; 
     
+    
     check_FD;
     
 end
@@ -88,3 +123,4 @@ end
 %% Update variables which are changed on each timestep
 update_global_variables; 
 
+end

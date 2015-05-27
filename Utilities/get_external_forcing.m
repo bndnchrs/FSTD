@@ -2,19 +2,21 @@
 % This routing loads in the strain rate at each timestep as well as the
 % thermodynamic input
 
-if do_Mech == 1
+if MECH.DO
     % Get the strain rate
     get_strain_rate;
     
 end
 
-if do_Thermo == 1
+if THERMO.DO
+    
     % Get the thermodynamic forcing
-    get_solar_forcing;
+    get_thermo_forcing;
     
 end
 
-if do_Swell == 1
+if SWELL.DO
+    
     % Get the sea state
     get_sea_state; 
     get_atten_dist; 

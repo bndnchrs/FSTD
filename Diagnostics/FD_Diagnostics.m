@@ -1,187 +1,161 @@
+function FD_Diagnostics
 %% FD_Diagnostics
 % This file, executed every global timestep, computes diagnostics for
 % saving.
+global DIAG
+global FSTD
+global MECH
+global THERMO
+global SWELL
+global OCEAN
+global EXFORC
 
-if do_Diagnostics == 1
+ind = FSTD.i;
+
+if DIAG.DO
     
     %% Evaluate Regular Diagnostics
     
-    if do_FD == 1
-        % Volume smaller than the largest floe size
-        Vless = psi(:,1:end-1);
-                
-        % Total Volume
-        Vol = integrate_FD(Vless,H,0);
-        VSAVE(i) = Vol;
+    if FSTD.DO
+        % Total Volume for smaller than largest floe size
+        DIAG.V_less(ind) = integrate_FD(FSTD.psi(:,1:end-1),FSTD.H,0);
         
+        % Total Volue in largest floe category
+        DIAG.Vmax(ind) = FSTD.H_max*sum(FSTD.psi(:,end));
         
+        % Total volume
+        DIAG.V_tot(ind) = DIAG.V_less(ind) + DIAG.Vmax(ind);
+        
+       
         % Mean Ice Thickness
-        Hmean = integrate_FD(psi,[H H_max],1);
-        HSAVE(i) = Hmean;
-        
-        
-        % FSD larger than a small cutoff
-        FSDc = FSD.*(FSD > 1e-6);
-        
-        % psi larger than a small cutoff
-        psic = psi.*(psi > 1e-6);
+        DIAG.H(ind) = integrate_FD(FSTD.psi,[FSTD.H FSTD.H_max],1);
         
         % Mean Floe Size calculated by area fraction
-        Rmeanarea(i) = integrate_FD(psi,R',1);
+        DIAG.Rmeanarea(ind) = integrate_FD(FSTD.psi,FSTD.R',1);
         
         % Mean Floe Size calculated by number of floes
-        Rmeannum(i) = integrate_FD(numfloes,R',1);
-        
-        % Floe smaller than 10 m
-        smallfloes(i) = sum(FSDc(R < 10));
-        
-        % Mean floe size of small floes
-        smallmfs(i) = integrate_FD(FSDc,R.*(R < 10),1);
-        
-        % Mean floe size of large floes
-        bigmfs(i) = integrate_FD(FSDc,R.*(R >= 10),1);
-        
-        % Concentration of large floes which obtain substantial area
-        % coverage
-        bigfloes(i) = sum(FSDc) - smallfloes(i);
+        DIAG.Rmeannum(ind) = integrate_FD(FSTD.NumberDist,FSTD.R',1);
         
         
         % Psi itself
-        psisave(:,:,i+1) = psi;
+        DIAG.psi(:,:,ind+1) = FSTD.psi;
         
         % Full difference
-        fulldiffsave(:,:,i) = diff_FD; 
+        DIAG.fulldiff(:,:,ind) = FSTD.diff; 
         
         % Open water formation
-        openersave(i) = opening;
-        
-        % Open water fraction
-        OWSAVE(i) = openwater;
+        DIAG.opener(ind) = FSTD.opening;
         
         % Ice concentration
-        concsave(i) = sum(psi(:));
+        DIAG.conc(ind) = sum(FSTD.psi(:));
         
         % Total amount of opening
-        diffsave(i) = sum(diff_FD(:));
-        
-        % Maximum Thickness
-        VMSAVE(i) = V_max; 
+        DIAG.diff(ind) = sum(FSTD.diff(:));
         
         % Maximum Floe thickness
-        HMSAVE(i) = H_max;
+        DIAG.H_max(ind) = FSTD.H_max;
         
         % Area fluxed into largest floe thickness
-        VMISAVE(i) = V_max_in;
-        
-        % Volume in largest floe thickness
-        Volex(i) = H_max*sum(psi(:,end));
-        
-        % Total volume of all floes
-        TotVol(i) = Volex(i) + VSAVE(i);
+        DIAG.V_max_in(ind) = FSTD.V_max_in;
         
         
         
     end
     
     %% Evaluate Mechanical Diagnostics
-    if do_Mech == 1 && mag~=0
+    if MECH.DO && MECH.mag~=0
         
         % Re-evaluate small floe stuff in terms of rafting size
-        fulldiffmech(:,:,i) = diff_mech; 
+        DIAG.fulldiffmech(:,:,ind) = MECH.diff; 
         
-         % Floe smaller than rafting size
-        smallfloes(i) = sum(FSDc(R < r_raft));
-        
-        % Mean floe size of small floes
-        smallmfs(i) = integrate_FD(FSDc,R.*(R < r_raft),1);
-        
-        % Mean floe size of large floes
-        bigmfs(i) = integrate_FD(FSDc,R.*(R >= r_raft),1);
-        
-        
-        % Amount of outgoing or incoming area for rafting/ridging
-        SAVE_OutRaft(i) = sum(Out_raft(:));
-        SAVE_InRaft(i) = sum(In_raft(:));
-        SAVE_InRidge(i) = sum(In_ridge(:));
-        SAVE_OutRidge(i) = sum(Out_ridge(:));
-        
-        % Outgoing area multiplied by thickness squared to give a
-        % rudimentary energy equivalent to work done
-        SAVE_OutRaftWork(i) = sum(Out_raft(:).*(meshH(:).^2));
-        SAVE_OutRidgeWork(i) = sum(Out_ridge(:).*(meshH(:).^2));
-        
+%         % Amount of outgoing or incoming area for rafting/ridging
+%         SAVE_OutRaft(ind) = sum(Out_raft(:));
+%         SAVE_InRaft(ind) = sum(In_raft(:));
+%         SAVE_InRidge(ind) = sum(In_ridge(:));
+%         SAVE_OutRidge(ind) = sum(Out_ridge(:));
+%         
+%         % Outgoing area multiplied by thickness squared to give a
+%         % rudimentary energy equivalent to work done
+%         SAVE_OutRaftWork(ind) = sum(Out_raft(:).*(meshH(:).^2));
+%         SAVE_OutRidgeWork(ind) = sum(Out_ridge(:).*(meshH(:).^2));
+%         
         % Ratio of area fluxed in total to opening amount
-        work2div(i) = sum(abs(diff_FD(:)))/sum(diff_FD(:));
+        DIAG.work2div(ind) = sum(abs(FSTD.diff(:)))/sum(FSTD.diff(:));
         
         % Total area flux accounted for from ridging
-        ridgework(i) = sum(abs(Out_ridge(:)));
+        DIAG.ridgework(ind) = sum(abs(MECH.Out_ridge(:)));
         
         % Total area flux from rafting
-        raftwork(i) = sum(abs(Out_ridge(:)));
+        DIAG.raftwork(ind) = sum(abs(MECH.Out_ridge(:)));
         
         % Opening required
-        magsave(i) = mag;
+        DIAG.magsave(ind) = MECH.mag;
         
         % Mean gamma, preference for ridging over rafting
-        gamsave(i) = sum(ITD(ITD > H_raft));
+        DIAG.gamsave(ind) = sum(FSTD.ITD(FSTD.ITD > MECH.H_raft));
         
         % First strain rate invariant
-        divsave(i) = eps_I;
+        DIAG.divsave(ind) = MECH.eps_I;
         
         % Second strain rate invariant
-        eps2save(i) = eps_II;
+        DIAG.eps2save(ind) = MECH.eps_II;
         
         % Amount of opening due to leaving the domain
-        opensave(i) = divopening;
+        DIAG.opensave(ind) = MECH.divopening;
         
         
     end
     
     %% Evaluate Thermodynamic Diagnostics
     
-    if do_Thermo == 1 
+    if THERMO.DO
         
-        fulldiffthermo(:,:,i) = diff_thermo; 
+        DIAG.fulldiffthermo(:,:,ind) = THERMO.diff; 
+        DIAG.T_ice(:,ind) = THERMO.T_ice; 
         % Side growth rate
-        drdtsave(i) = drdt;
+        DIAG.drdt(ind) = THERMO.drdt;
+        DIAG.dhdt(:,ind) = THERMO.dhdt; 
         % Thickness growth rates at each floe thickness
-        dhdtsave(:,i) = dhdt;
+    %    DIAG.thermo_dhdt(:,ind) = THERMO.dhdt;
         % Ocean temperature
-        Tsave(i) = T_ocean;
+      %  DIAG.Toc(ind) = T_ocean;
         % Heat fluxes saved
-        Qsave(i,:) = [Q_o Q_lat Q_vert];
+        DIAG.Qpartition(ind,:) = [THERMO.Q_o THERMO.Q_lat THERMO.Q_bas];
         % Total Surface area 
-        SAsave(i) = SAmean;
+        DIAG.SA(ind) = FSTD.SAmean;
         % Lead fraction 
-        Alsave(i) = Al;
+        DIAG.Al(ind) = THERMO.Al;
+        DIAG.Ao(ind) = THERMO.Ao; 
+        
         % Edge-growth
-        EGsave(i) = sum(sum(edgegrowth));
-        % Basal Heat Flux
-        bashf(i) = dhdt_bas*dt;
-        % Surface Heat Flux
-        surfhf(i) = dhdt_surf*dt;
+        DIAG.EGsave(ind) = sum(sum(THERMO.edgegrowth));
         
-        pansave(i) = pancakes; 
+        DIAG.pansave(ind) = THERMO.pancakes; 
         % Pancake Growth
-        
-        % Positive Growth Side
-        dtplus = diff_thermo.*(diff_thermo > 0);
-        % Negative Growth Side
-        dtmin = diff_thermo.*(diff_thermo < 0); 
-       
+
     end
     
-    if do_Swell == 1 && stormy(III,i) == 1
+    if SWELL.DO && EXFORC.stormy(ind) == 1
         
-        fulldiffswell(:,:,i) = diff_swell; 
-        wattensave(:,i) = W_atten; 
-        tauswellsave(:,i) = tau_swell; 
+        DIAG.fulldiffswell(:,:,ind) = SWELL.diff; 
+        DIAG.wattensave(:,ind) = SWELL.W_atten; 
+        DIAG.tauswellsave(:,ind) = SWELL.tau_swell; 
 
         
     end
     
-    clear FSDc psic Hmean Vless Vol
     
+    if OCEAN.DO
+        DIAG.OceanT(ind) = OCEAN.T;
+        DIAG.OceanS(ind) = OCEAN.S;
+        DIAG.OceanQo(ind) = OCEAN.Q_o; 
+        DIAG.OCEANQoi(ind) = OCEAN.Q_oi; 
+        DIAG.Oceanpan(ind) = OCEAN.pancakes; 
+        DIAG.OceandTdt(ind) = OCEAN.dTdt; 
+        DIAG.OCELW(ind) = OCEAN.LW; 
+        DIAG.OCESW(ind) = OCEAN.SW; 
+        DIAG.OCESH(ind) = OCEAN.SH; 
+    end
     
 end
 

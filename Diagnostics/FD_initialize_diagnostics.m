@@ -1,93 +1,107 @@
+function FD_initialize_diagnostics
 %% FD_initialize_diagnostics
 % This code initializes all the diagnostics arrays that will be used in the
 % execution of the FSD code
 
-if do_FD == 1
+global DIAG
+global FSTD
+global OPTS
+global THERMO
+global MECH
+global SWELL
+global OCEAN
+
+nt = OPTS.nt; 
+
+if FSTD.DO
     % Diagnostics for General Mode
     
-    totnum = 0;
-    psisave = zeros([size(psi) nt + 1]);
-    psisave(:,:,1) = psi;
-    concsave = 0*(1:nt);
-    diffsave = 0*(1:nt);
-    fulldiffsave = 0*psisave; 
-    opensave = 0*(1:nt);
-    open0save = 0*(1:nt);
-    Rmeanarea = 0*(1:nt);
-    Rmeannum = 0*(1:nt);
-    HMSAVE = concsave;
-    VMISAVE = concsave;
+    DIAG.totnum = 0;
+    DIAG.psi = zeros([size(FSTD.psi) nt + 1]);
+    DIAG.psi(:,:,1) = FSTD.psi;
+    DIAG.conc = 0*(1:nt);
+    DIAG.diff = 0*(1:nt);
+    DIAG.fulldiff = 0*DIAG.psi; 
+    DIAG.opensave = 0*(1:nt);
+    DIAG.open0save = 0*(1:nt);
+    DIAG.Rmeanarea = 0*(1:nt);
+    DIAG.Rmeannum = 0*(1:nt);
+    DIAG.H =0*(1:nt);
+    DIAG.V_max_in = 0*(1:nt);
     %    AISAVE(i) = dA_max;
-    Volex = concsave;
-    TotVol = concsave;
+    DIAG.V_max = 0*(1:nt);
+    DIAG.V_less = 0*(1:nt);
+    DIAG.V_tot = 0*(1:nt); 
+    DIAG.Vmax = 0*(1:nt);
     %     VSAVE_MAX(i) = Vol_diff;
-    dhdtsave = concsave;
-    dhdtvolsave = concsave;
-    dhdtinpsave = concsave;
-    
-    smallfloes = 0*(1:nt);
-    smallmfs = 0*(1:nt);
-    bigmfs = 0*(1:nt);
-    bigfloes = 0*(1:nt);
-    gamsave = 0*(1:nt);
-    
-    VSAVE =0*(1:nt);
-    VMSAVE= VSAVE ; 
-    HSAVE = 0*(1:nt);
-    OWSAVE = 0*(1:nt);
+    DIAG.dhdt = 0*(1:nt);
+    DIAG.dhdtvol = 0*(1:nt);
+    DIAG.dhdtinp = 0*(1:nt);
+    DIAG.gamma = 0*(1:nt);
     
 end
 
-if do_Mech == 1
+if MECH.DO == 1
     % Diagnostics for Mechanical Mode
-    work2div = 0*(1:nt);
-    ridgework = 0*(1:nt);
-    raftwork = 0*(1:nt);
-    magsave = 0*(1:nt);
-    openersave = 0*(1:nt);
-    divsave = 0*(1:nt);
-    eps2save = 0*(1:nt);
-    THETASAVE = 0*(1:nt);
-    PSAVE = 0*(1:nt);
-    fulldiffmech = 0*psisave; 
+    DIAG.work2div = 0*(1:nt);
+    DIAG.ridgework = 0*(1:nt);
+    DIAG.raftwork = 0*(1:nt);
+    DIAG.mag = 0*(1:nt);
+    DIAG.opener = 0*(1:nt);
+    DIAG.div = 0*(1:nt);
+    DIAG.eps2 = 0*(1:nt);
+    DIAG.THETA = 0*(1:nt);
+    DIAG.P = 0*(1:nt);
+    DIAG.fulldiffmech = 0*DIAG.psi; 
     
 end
 
-if do_Thermo == 1
+if THERMO.DO == 1
     % Diagnostics for Thermodynamic Mode
     
-    fulldiffthermo = 0*psisave; 
-    
+    DIAG.T_ice = zeros(length(FSTD.H)+1,nt);
+    DIAG.fulldiffthermo = 0*DIAG.psi; 
     % Side growth rate
-    drdtsave = 0*(1:nt);
+    DIAG.drdt = 0*(1:nt);
     % Thickness growth rates at each floe thickness
-    dhdtsave = zeros(length(H)+1,nt);
+    DIAG.dhdt = zeros(length(FSTD.H)+1,nt);
     % Ocean temperature
-    Tsave = 0*(1:nt);
+    DIAG.Toc = 0*(1:nt);
     % Heat fluxes saved
-    Qsave = zeros(nt,3);
-    % Total Surface area
-    SAsave = 0*(1:nt);
-    % Lead fraction
-    Alsave = 0*(1:nt);
-    % Edge-growth
-    EGsave = 0*(1:nt);
-    % Basal Heat Flux
-    bashf = 0*(1:nt);
-    % Surface Heat Flux
-    surfhf = 0*(1:nt);
+    DIAG.Qpartition = zeros(nt,3);
+    % 1st column is to bases
+    % 2nd column is to sides
+    % 3rd column is open water
     
-    dtmin = 0*psisave; 
-    dtplus = 0*psisave; 
+    % Total Surface area
+    DIAG.SA = 0*(1:nt);
+    % Lead fraction
+    DIAG.Al = 0*(1:nt);
+    DIAG.Ao = 0*(1:nt);
+    % Edge-growth
+    DIAG.EGsave = 0*(1:nt);
+    % Basal Heat Flux
     
     % Pancake Growth
-    pansave = 0*(1:nt); 
+    DIAG.pansave = 0*(1:nt); 
     
 end
 
-if do_Swell == 1
-    fulldiffswell = 0*psisave; 
-    wattensave(:,i) = 0*R; 
-    tauswellsave(:,i) = 0*R; 
+if SWELL.DO
+    DIAG.fulldiffswell = 0*DIAG.psi; 
+    DIAG.wattensave = zeros(length(FSTD.R),nt); 
+    DIAG.tauswellsave = zeros(length(FSTD.R),nt);  
 end
 
+if OCEAN.DO
+    DIAG.OceanT = 0*(1:nt); 
+    DIAG.OceanS = 0*(1:nt); 
+    DIAG.OceanQo = 0*(1:nt); 
+    DIAG.OCEANQoi = 0*(1:nt); 
+    DIAG.Oceanpan = 0*(1:nt); 
+    DIAG.OceandTdt = 0*(1:nt); 
+    DIAG.OCELW = 0*(1:nt); 
+    DIAG.OCESW = 0*(1:nt); 
+    DIAG.OCESH = 0*(1:nt); 
+end
+    

@@ -1,3 +1,8 @@
+function update_psi
+
+global FSTD
+global OPTS
+
 %% update_psi
 % This routing updates the floes distribution according to the maximal
 % approved timestep dt_temp. It also updates the open water fraction and
@@ -5,23 +10,23 @@
 % a small percentage of the ice cover.
 
 % new Floe Distribution
-psi = psi + dt_temp*diff_FD;
+FSTD.psi = FSTD.psi + OPTS.dt_temp*FSTD.diff;
 
 % new open water fraction
-openwater = 1 - sum(psi(:)); 
+FSTD.openwater = 1 - sum(FSTD.psi(:)); 
 
-conc = sum(psi(:));
+FSTD.conc = sum(FSTD.psi(:));
+FSTD.phi = 1 - FSTD.conc; 
 
 %% Take away areas with very small concentrations
 
 % In case we overshoot due to rounding errors, we adjust these
 % (this will happen once in a while)
 
-resid_adjust = psi.*(abs(psi) < eps);
-psi = psi - resid_adjust;
-openwater = 1 - sum(psi(:));
-conc = sum(psi(:)); 
-numfloes = psi./(pi*meshR.^2);
+resid_adjust = FSTD.psi.*(abs(FSTD.psi) < eps);
+FSTD.psi = FSTD.psi - resid_adjust;
+FSTD.openwater = 1 - sum(FSTD.psi(:));
+FSTD.conc = sum(FSTD.psi(:)); 
+FSTD.NumberDist = FSTD.psi./(pi*FSTD.meshR.^2);
 
-clear resid_adjust 
-
+end

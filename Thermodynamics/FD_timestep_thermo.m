@@ -1,139 +1,157 @@
+function FD_timestep_thermo
 %% FD_timestep_thermo
 % This routing calculates the tendency due to one thermodynamic timestep
 
+global FSTD
+global THERMO
+global EXFORC
+global OPTS
+global OCEAN
+
 % Calculate total floe surface area per sea surface area
-[meshRthermo,~] = meshgrid([r_p R(2:end)],[H H_max]);
+% [meshRthermo,~] = meshgrid([OPTS.r_p FSTD.R(2:end)],[FSTD.H FSTD.H_max]);
 
-% This is the total floe surface area, mean
-SAmean = integrate_FD(psi,2*bsxfun(@rdivide,[H H_max],R'),1);
-% If it is zero, we set it to be infinite
-if SAmean == 0;
-    SAmean = Inf;
+
+FSTD.SAmean = integrate_FD(FSTD.psi,2*bsxfun(@rdivide,[FSTD.H FSTD.H_max],FSTD.R'),1);
+
+if FSTD.SAmean == 0;
+    FSTD.SAmean = Inf;
 end
 
-% Determine what portion of the heat flux goes where
-partition_heat_flux;
-% Returns
-% Q_vert - Heat flux that is over ice
-% Q_bas - heat flux to lead region that goes to ice base
-% Q_lat - heat flux to lead region that goes to ice sides
-% Q_l - heat flux to lead region (total = Q_bas + Q_lat). 
-% Q_o - heat flux to open water
+% Determine what portion of the heat flux goes where over open water
+partition_lead_heat_flux;
 
-%% Pancake Growth
-if Q_o < 0 % Freezing ice
-    pancakes = -Q_o / (L_f * rho_ice * h_p);
+%% Do Horizontal Growth Rate from Lead Heat FLux
+
+% Horizontal floe growth rate
+THERMO.drdt = -THERMO.Q_lat/(OPTS.rho_ice*OPTS.L_f*FSTD.SAmean);
+
+% If we are heating, generally, then we might want to let some heat flux
+% reach the ocean surface rather than be in the ice.
+
+if EXFORC.Q_oc > 0 % Some small area is open to heat fom the atmosphere
+    
+    % QLmin is the small fraction
+    if isfield(OPTS,'qlmin') && OPTS.qlmin == 0;
+        % Lead fraction is at least smallfrac
+        THERMO.Al = max(THERMO.Al,THERMO.smallfrac);
+        THERMO.Q_l = THERMO.Q*THERMO.Al;
+        THERMO.Q_lat = THERMO.Q_l * (FSTD.SAmean/(FSTD.SAmean + FSTD.conc));
+        
+        % If ice concentration is zero, just say all lead heat flux is
+        % lateral
+        if FSTD.conc < eps
+            
+            THERMO.Q_lat = THERMO.Q_l;
+            
+            
+        end
+        
+        
+        if FSTD.SAmean == Inf
+            
+            THERMO.Q_lat = 0;
+            
+        end
+        
+        % Q_vert = Q - Q_o - Q_l; % Heat Flux to ice top. Not used.
+        THERMO.Q_bas = THERMO.Q_l - THERMO.Q_lat;
+        
+    end
+    
+end
+
+% This is the lateral growth rate per floe
+THERMO.drdt = -THERMO.Q_lat/(OPTS.rho_ice*OPTS.L_f*(FSTD.SAmean));
+% This is that impact on total area growth per floe size
+THERMO.edgegrowth = OPTS.dt_sub*(2./FSTD.meshR).*FSTD.psi*THERMO.drdt;
+
+%% Do Pancake Growth Rate from open water heat flux
+if THERMO.Q_o < 0 && ~OCEAN.DO
+        THERMO.pancakes = -THERMO.Q_o / (OPTS.L_f * OPTS.rho_ice * OPTS.h_p);
 else
-    pancakes = 0;
+    THERMO.pancakes = 0;
 end
-pancake_growth = 0*meshR;
-pancake_growth(1,1) = pancakes*dt_sub;
+THERMO.pancake_growth = 0*FSTD.meshR;
+THERMO.pancake_growth(1,1) = THERMO.pancakes*OPTS.dt_sub;
 
-%% Floe Size Growth Rate
-% Growth at each floe size. 
-if Q > 0 % Some small area is open to heat fom the atmosphere
-    
-    if exist('params','var') && params.qlmin == 0; 
-    Al = max(Al,smallfrac);
-    Q_l = Q*Al;
-    Q_lat = Q_l * (SAmean/(SAmean + conc));
-    
-    if conc < eps
-        
-        Q_lat = Q_l;
-        
-    end
-    
-    if SAmean == Inf
-        
-        Q_lat = 0;
-        
-    end
-    
-    Q_vert = Q - Q_o - Q_l; % Heat Flux to ice top
-    Q_bas = Q_l - Q_lat;
-    
-    end
-    
+%% Now Vertical Thermodynamics
+%
+% Using Semtner Thermo, simple 1-D model using net heat flux to the ice
+% without longwave. This is calculated locally at each ice floe. 
+[THERMO.dhdt_surf,THERMO.dhdt_base,THERMO.Q_cond,THERMO.Q_atm,THERMO.T_ice] = semtner_1D_thermo(EXFORC.Q_ic_noLW,THERMO.Q_bas,[FSTD.H FSTD.H_max],THERMO.T_ice);
+
+% dhdt_surf is melting at surface for a single column of ice
+% dhdt_base is melting/growth at base " " " "
+% Q_cond is the conductive heat flux to the base for a single column of ice
+% Q_atm is the heat budget at the surface for " " " "
+% T_new is the ice temperature given these external forcings
+
+% We now get the total outgoing LW heat fluxes
+THERMO.Q_lw = OPTS.sigma * (THERMO.T_ice + 273.14).^4;
+
+% Atmosphere - Radiative Net heat flux at surface for ice
+EXFORC.Q_ic = EXFORC.Q_ic_noLW - THERMO.Q_lw;
+
+THERMO.dhdt = (THERMO.dhdt_surf + THERMO.dhdt_base);
+
+if FSTD.conc == 0
+    THERMO.dhdt = zeros(size(THERMO.dhdt));
 end
-
-drdt = -Q_lat/(rho_ice*L_f*(SAmean));
-edgegrowth = dt_sub*(2./meshR).*psi*drdt;
-
-
-
-%% Thickness Growth Rate 
-
-% dhdt_surf = -.1*Q_vert/(rho_ice*L_f);
-% dhdt_bas = -Q_bas/(rho_ice*L_f);
-
-if conc == 0
-    dhdt_bas = 0;
-end
-
-% deltaT = 0; 
-if exist('do_diff','var') && do_diff == 1
-dhdt_diff = kice*deltaT./(rho_ice*L_f*[H H_max]);
-else
-    dhdt_diff = 0 + 0*[H H_max]; 
-end
-
-dhdt = (dhdt_surf + dhdt_bas + dhdt_diff);
-
-
-
 
 %% Advective Tendencies
-v_r = repmat(drdt,size(psi));
-v_h = repmat(dhdt,[length(R),1]);
+v_r = repmat(THERMO.drdt,size(FSTD.psi));
+v_h = repmat(THERMO.dhdt,[length(FSTD.R),1]);
 
-adv_tend = advect2_upwind(psi,R,[H H_max],v_r,v_h,dt_sub);
+[THERMO.adv_tend,THERMO.meltoutR,THERMO.meltoutH] = advect2_upwind(FSTD.psi,FSTD.R,[FSTD.H FSTD.H_max],v_r,v_h,OPTS.dt_sub,THERMO.allow_adv_loss_R,THERMO.allow_adv_loss_H);
 
-if(isnan(sum(adv_tend(:))))
+if(isnan(sum(THERMO.adv_tend(:))))
     
     error('isnan advtend');
-
+    
 end
 
 %%
 clear v_r v_h
 
-diff_thermo = (1/dt_sub) * (adv_tend + pancake_growth + edgegrowth);
+THERMO.diff = (1/OPTS.dt_sub) * (THERMO.adv_tend + THERMO.pancake_growth + THERMO.edgegrowth);
 
 %%
-opening_thermo = -sum(diff_thermo(:));
+THERMO.opening = -sum(THERMO.diff(:));
 
-if Q < 0
+%% Handle volume losses at the thickest floe size category
+
+if EXFORC.Q_oc < 0
     % If we are freezing, the amount of ice volume added is equal to the
     % incoming ice multiplied by that ice's thickness
-    if ~isempty(H)
-    dV_max_adv = sum(adv_tend(:,end)*H(end))/dt_sub;
+    if ~isempty(FSTD.H)
+        THERMO.dV_max_adv = sum(THERMO.adv_tend(:,end)*FSTD.H(end))/OPTS.dt_sub;
     else
         % There is no advective flux between thickness classes as there are no
         % thickness classes
-        dV_max_adv = 0; 
+        THERMO.dV_max_adv = 0;
     end
     
 else
     % Otherwise it is equal to the lost ice volume at the largest size
-    if ~isempty(H)
-    dV_max_adv = sum(adv_tend(:,end)*H_max)/dt_sub;
+    if ~isempty(FSTD.H)
+        THERMO.dV_max_adv = sum(THERMO.adv_tend(:,end)*FSTD.H_max)/OPTS.dt_sub;
     else
         % again, no advective flux because there are no thickness classes
-        dV_max_adv = 0;
+        THERMO.dV_max_adv = 0;
     end
 end
 
 % Added volume is equal to dhdt * psi(r,h_max)
-dV_max_basal = sum(psi(:,end)*dhdt(:,end)); 
+THERMO.dV_max_basal = sum(FSTD.psi(:,end)*THERMO.dhdt(:,end));
 
 % The actual ice added is accounted for by the edge growth term
-dV_max_edge = 2*H_max*sum(psi(:,end)./R')*drdt;
+THERMO.dV_max_edge = 2*FSTD.H_max*sum(FSTD.psi(:,end)./FSTD.R')*THERMO.drdt;
 
-dV_max_pancake = sum(pancake_growth(:,end)/dt_sub)*h_p; 
+THERMO.dV_max_pancake = sum(THERMO.pancake_growth(:,end)/OPTS.dt_sub)*OPTS.h_p;
 
-V_max_in_thermo =  dV_max_basal + dV_max_adv + dV_max_edge + dV_max_pancake;
+THERMO.V_max_in =  THERMO.dV_max_basal + THERMO.dV_max_adv + THERMO.dV_max_edge + THERMO.dV_max_pancake;
 
-V_max_out_thermo = 0;
+THERMO.V_max_out = 0;
 
-
+end
