@@ -2,29 +2,33 @@
 % This routine checks for errors in the code. It also outputs required or
 % requested information to the command line.
 if FSTD.H_max < 0
-    error('Negative H')
+    disp('Negative H')
+    FSTD.eflag = 1; 
+
 end
 
 if sum(FSTD.psi(:)) > 1
+    sum(FSTD.psi(:))
     disp('Too much conc')
     FSTD.i
-    error(1)
+    FSTD.eflag = 1; 
 end
 
 if isnan(FSTD.psi)
     disp('NaNned out')
     FSTD.i
-    error(1)
+    FSTD.eflag = 1; 
 end
 
 if abs(FSTD.opening + sum(FSTD.diff(:))) > eps
     disp('Bad Opening/Closing')
-    error(1)
+    FSTD.eflag = 1; 
 end
 
 if min(FSTD.psi(:)) < 0
     disp(FSTD.i)
-    error('Less Than Zero after cutting')
+    disp('Less Than Zero after cutting')
+    FSTD.eflag = 1; 
 end
 
 %     if i > 1

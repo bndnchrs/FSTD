@@ -51,6 +51,7 @@ for i =  OPTS.start_it: OPTS.end_it
         
     end
        
+    %%
     if DIAG.DOPLOT
         
         FD_Plot;
@@ -61,7 +62,12 @@ for i =  OPTS.start_it: OPTS.end_it
     
     drawnow
     
+    if FSTD.eflag
+        
+        return
     
+    end
+        
     
 end
 

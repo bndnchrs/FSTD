@@ -27,7 +27,7 @@ end
 % We want to calculate whether we will form pancakes or not.
 % If we do, we first calculate how much heat would be required to cool the
 % water to its freezing point (qreq)
-qreq = (prefac /OPTS.dt_sub) * (-2 - OCEAN.T);
+qreq = (prefac /OPTS.dt_sub) * (OCEAN.Tfrz - OCEAN.T);
 
 %%
 % If the heat flux is stronger than this, we let the excess be used to

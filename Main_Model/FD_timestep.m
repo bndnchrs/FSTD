@@ -110,6 +110,10 @@ while OPTS.dt_sub > 0
     
     check_FD;
     
+    if FSTD.eflag
+        return 
+    end
+    
 end
 
 %% Update variables which are changed on each timestep

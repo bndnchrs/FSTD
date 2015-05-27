@@ -23,7 +23,7 @@ end
 
 if ~isfield(OCEAN,'Tfrz')
     
-    OCEAN.Tfrz = 0; % Freezing Temperature
+    OCEAN.Tfrz = -1.8; % Freezing Temperature
     
 end
 

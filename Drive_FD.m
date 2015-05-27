@@ -23,6 +23,8 @@
 % struct DIAG % Contains diagnostics
 % struct EXFORC % Contains External Forcing
 
+clear all
+
 FSTD = struct(); 
 OPTS = struct();
 THERMO = struct(); 

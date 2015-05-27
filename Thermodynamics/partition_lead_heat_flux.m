@@ -11,7 +11,7 @@ if OCEAN.DO
     
     dens = OCEAN.EOS(OCEAN.T,OCEAN.S);
     OCEAN.Ti_Mean= integrate_FD(FSTD.psi,THERMO.T_ice,1);
-    prefac = OCEAN.cp_w * dens;
+    prefac = OCEAN.cp_w * dens * OCEAN.ustar_oceice;
     % Heat flux from ocean to ice
     OCEAN.Q_oi =  FSTD.conc* prefac * (OCEAN.T - OCEAN.Tfrz); 
     

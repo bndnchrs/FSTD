@@ -138,6 +138,8 @@ end
 FSTD.diff = 0*FSTD.psi;
 
 FSTD.opening = 0;
+FSTD.eflag = 0; % Flag for when we run into error 
+
 
 FSTD.NumberDist = FSTD.psi./(pi*FSTD.meshR.^2);
 
