@@ -1,11 +1,3 @@
-function timestep_ocean
-
-global OCEAN
-global THERMO
-global FSTD
-global OPTS
-
-
 %% Temperature Evolution
 
 dens = OCEAN.EOS(OCEAN.T,OCEAN.S);
@@ -82,7 +74,3 @@ FSTD.dV_ice = integrate_FD(FSTD.diff + OCEAN.diff,[FSTD.H FSTD.H_max],0);
 
 % Time rate of change of salinity
 OCEAN.dSdt = OCEAN.S * (OPTS.rho_ice/dens) * (1 / OCEAN.H) * FSTD.dV_ice;
-
-
-
-end

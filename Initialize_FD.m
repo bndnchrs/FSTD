@@ -1,15 +1,7 @@
-function Initialize_FD
+function [FSTD,OPTS,THERMO,MECH,SWELL,DIAG,EXFORC,OCEAN] = Initialize_FD(FSTD,OPTS,THERMO,MECH,SWELL,DIAG,EXFORC,OCEAN)
 %% Initialize_FD
 % This second-level program contains calls to the initialization schemes
-% for each process.
-
-global OPTS
-global FSTD
-global THERMO
-global MECH
-global SWELL
-global DIAG
-global OCEAN
+% for each process
 
 % first_init is a flag that is passed from the main driver.
 

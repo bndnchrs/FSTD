@@ -1,17 +1,17 @@
-function FD_Run
+function [FSTD,OPTS,THERMO,MECH,SWELL,DIAG,EXFORC,OCEAN] = FD_Run(FSTD,OPTS,THERMO,MECH,SWELL,DIAG,EXFORC,OCEAN)
 %% FD_Run
 % This is the main driver of a single simulation: it uses
 % previously initialized conditions and variables to simulate the floe
 % distribution. Failing its external initialization, it contains a call
 % initialize itself
 
-global OPTS
-global FSTD
-global THERMO
-global MECH
-global SWELL
-global OCEAN
-global DIAG
+% struct OPTS
+% struct FSTD
+% struct THERMO
+% struct MECH
+% struct SWELL
+% struct OCEAN
+% struct DIAG
 
 
 if isfield(OPTS,'driven') && OPTS.driven == 0
@@ -19,11 +19,11 @@ if isfield(OPTS,'driven') && OPTS.driven == 0
     % There is a flag first_init in the initialization scheme which
     % computes all required fields if it is asked to.
         
-    Initialize_FD;
+    [FSTD,OPTS] = Initialize_FD(FSTD,OPTS);
     
     if OCEAN.DO
         
-        Initialize_Ocean;
+        [FSTD,OPTS,OCEAN] = Initialize_Ocean(FSTD,OPTS,OCEAN);
         
     end
     
@@ -44,14 +44,8 @@ for i =  OPTS.start_it: OPTS.end_it
     if FSTD.DO
         
         
-        FD_timestep;
-        
-      
-        
-        % Compute diagnostic output
-        if DIAG.DO
-            FD_Diagnostics;
-        end
+        [FSTD,OPTS,THERMO,MECH,SWELL,DIAG,EXFORC,OCEAN] = FD_timestep(FSTD,OPTS,THERMO,MECH,SWELL,DIAG,EXFORC,OCEAN);
+       
         
         % Print output and check for errors
         

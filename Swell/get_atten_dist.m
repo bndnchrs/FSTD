@@ -1,11 +1,8 @@
-function get_atten_dist
+% get_atten_dist
 % This function calculates the wave attenuation distance W(\lambda) as well
 % as the swell fracture timescales \tau(\lambda) using an approximation to
 % the results obtained by Kohout and Meylan (2008).
 
-global SWELL
-global OPTS
-global FSTD
 
 % The expression is ln(alpha) = hbar - (1/6)sqrt(2 \pi \lambda/g) - 3 +
 % ln(c/2 x r bar)
@@ -78,7 +75,3 @@ v_group = (1/2)*(g*SWELL.Lambda/(2*pi)).^(1/2);
 
 % the timescale for energy from waves of wavelength lambda to cross the domain
 SWELL.tau_swell = OPTS.Domainwidth ./ v_group;
-
-
-
-end

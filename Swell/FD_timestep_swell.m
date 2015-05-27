@@ -1,8 +1,3 @@
-function FD_timestep_swell
-
-global FSTD
-global SWELL
-
 %% This code executes one timestep of the swell fracture code
 
 
@@ -37,5 +32,3 @@ SWELL.diff = SWELL.In - SWELL.Out;
 % Keeping track of the volume in the largest floe thickness
 SWELL.V_max_in = FSTD.H_max*sum(SWELL.In(:,end)); 
 SWELL.V_max_out = FSTD.H_max*sum(SWELL.Out(:,end)); 
-
-end

@@ -1,13 +1,5 @@
-function FD_timestep_thermo
 %% FD_timestep_thermo
 % This routing calculates the tendency due to one thermodynamic timestep
-
-global FSTD
-global THERMO
-global EXFORC
-global OPTS
-global OCEAN
-
 % Calculate total floe surface area per sea surface area
 % [meshRthermo,~] = meshgrid([OPTS.r_p FSTD.R(2:end)],[FSTD.H FSTD.H_max]);
 
@@ -153,5 +145,3 @@ THERMO.dV_max_pancake = sum(THERMO.pancake_growth(:,end)/OPTS.dt_sub)*OPTS.h_p;
 THERMO.V_max_in =  THERMO.dV_max_basal + THERMO.dV_max_adv + THERMO.dV_max_edge + THERMO.dV_max_pancake;
 
 THERMO.V_max_out = 0;
-
-end

@@ -1,8 +1,4 @@
-function FD_initialize_mechanics
 %% FD_initialize_mechanics
-global FSTD
-global OPTS
-global MECH
 
 if FSTD.DO
     
@@ -117,7 +113,7 @@ if FSTD.DO
         MECH.S_H_ridge = S_H_ridge;
         MECH.Kfac_ridge = Kfac_ridge;
         MECH.Prob_Interact_ridge = Prob_Interact_ridge;
-                       
+        
     catch errloading
         
         % Make sure the file didn't exist and it isn't something else
@@ -169,10 +165,10 @@ if FSTD.DO
                     [MECH.S_R_ridge,MECH.S_H_ridge,MECH.Kfac_ridge,MECH.Prob_Interact_ridge] = ...
                         calc_sizes_ridge_FD_2(FSTD.R,OPTS.A_tot,[FSTD.H FSTD.H_max],MECH.dont_guarantee_bigger,MECH.use_old_interactions);
                     
-                    S_R_ridge = MECH.S_R_ridge; 
-                    S_H_ridge = MECH.S_H_ridge; 
-                    Kfac_ridge = MECH.Kfac_ridge; 
-                    Prob_Interact_ridge = MECH.Prob_Interact_ridge; 
+                    S_R_ridge = MECH.S_R_ridge;
+                    S_H_ridge = MECH.S_H_ridge;
+                    Kfac_ridge = MECH.Kfac_ridge;
+                    Prob_Interact_ridge = MECH.Prob_Interact_ridge;
                     
                     save(intstr,'S_R_*','S_H_*','Kfac*','Prob_Interact_*');
                     
@@ -181,10 +177,10 @@ if FSTD.DO
                     [MECH.S_R_ridge,MECH.S_H_ridge,MECH.Kfac_ridge,MECH.Prob_Interact_ridge] = ...
                         calc_sizes_ridge_FD(FSTD.R,MECH.r_ridge,OPTS.A_tot,MECH.k_ridge,[FSTD.H FSTD.H_max],MECH.dont_guarantee_bigger,MECH.use_old_interactions);
                     
-                    S_R_ridge = MECH.S_R_ridge; 
-                    S_H_ridge = MECH.S_H_ridge; 
-                    Kfac_ridge = MECH.Kfac_ridge; 
-                    Prob_Interact_ridge = MECH.Prob_Interact_ridge; 
+                    S_R_ridge = MECH.S_R_ridge;
+                    S_H_ridge = MECH.S_H_ridge;
+                    Kfac_ridge = MECH.Kfac_ridge;
+                    Prob_Interact_ridge = MECH.Prob_Interact_ridge;
                     
                     save(intstr,'S_R_*','S_H_*','Kfac*','Prob_Interact_*');
                     

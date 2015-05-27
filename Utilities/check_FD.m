@@ -1,11 +1,6 @@
-function check_FD
 %% FD_Check
 % This routine checks for errors in the code. It also outputs required or
 % requested information to the command line.
-global FSTD
-global OPTS
-
-
 if FSTD.H_max < 0
     error('Negative H')
 end

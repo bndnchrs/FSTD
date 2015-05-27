@@ -1,9 +1,5 @@
-function initialize_ocean
-% function initialize_ocean
+% initialize_ocean
 % this function initializes the ocean component of the FSTD model
-global OCEAN
-global FSTD
-global OPTS
 
 
 if ~isfield(OCEAN,'H')
@@ -24,9 +20,22 @@ if ~isfield(OCEAN,'T')
     
 end
 
+
+if ~isfield(OCEAN,'Tfrz')
+    
+    OCEAN.Tfrz = 0; % Freezing Temperature
+    
+end
+
 if ~isfield(OCEAN,'rho_ice')
     
     OCEAN.rho_ice = 934; % kg/m^3. Ice Density
+    
+end
+
+if ~isfield(OCEAN,'ustar_oceice')
+    
+    OCEAN.ustar_oceice = 1e-4; % m/s. Ice-ocean roughness velocity
     
 end
 

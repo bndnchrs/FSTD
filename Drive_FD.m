@@ -13,23 +13,31 @@
 % SWELL: similar, for swell fracture
 % OPTS: containing global options
 
-clearvars -global
+% There are several structures that need to be passed. 
+% struct FSTD % FSTD op tions
+% struct THERMO % Thermodynamics options
+% struct MECH % Mechanics options
+% struct SWELL % Swell fracture options
+% struct OPTS % General options
+% struct OCEAN % hehe . Contains information about the ocean model
+% struct DIAG % Contains diagnostics
+% struct EXFORC % Contains External Forcing
 
-global FSTD % FSTD op tions
-global THERMO % Thermodynamics options
-global MECH % Mechanics options
-global SWELL % Swell fracture options
-global OPTS % General options
-global OCEAN % hehe . Contains information about the ocean model
-global DIAG % Contains diagnostics
-global EXFORC % Contains External Forcing
+FSTD = struct(); 
+OPTS = struct();
+THERMO = struct(); 
+MECH = struct(); 
+SWELL = struct(); 
+OCEAN = struct(); 
+DIAG = struct(); 
+EXFORC = struct(); 
 
 
 
-Set_Run_Variables;
+[FSTD,OPTS,THERMO,MECH,SWELL,DIAG,EXFORC,OCEAN] = Set_Run_Variables(FSTD,OPTS,THERMO,MECH,SWELL,DIAG,EXFORC,OCEAN) ;
 
 %% Actually Run the Model
-FD_Run;
+[FSTD,OPTS,THERMO,MECH,SWELL,DIAG,EXFORC,OCEAN] = FD_Run(FSTD,OPTS,THERMO,MECH,SWELL,DIAG,EXFORC,OCEAN) ;
 
 if FSTD.DO
     

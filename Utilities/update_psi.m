@@ -1,8 +1,3 @@
-function update_psi
-
-global FSTD
-global OPTS
-
 %% update_psi
 % This routing updates the floes distribution according to the maximal
 % approved timestep dt_temp. It also updates the open water fraction and
@@ -28,5 +23,3 @@ FSTD.psi = FSTD.psi - resid_adjust;
 FSTD.openwater = 1 - sum(FSTD.psi(:));
 FSTD.conc = sum(FSTD.psi(:)); 
 FSTD.NumberDist = FSTD.psi./(pi*FSTD.meshR.^2);
-
-end

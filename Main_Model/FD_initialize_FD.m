@@ -1,10 +1,8 @@
-function FD_initialize_FD
+function [FSTD,OPTS] = FD_initialize_FD(FSTD,OPTS)
 %% FD_initialize_FD
 % This routine initializes the main floe distribution variables, including
 % the floe distribution itself and many of the diagnostics
 
-global OPTS %options files
-global FSTD % FSTD files
 %% Timestepping
 
 % Times

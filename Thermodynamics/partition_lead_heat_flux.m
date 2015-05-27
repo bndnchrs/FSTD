@@ -1,15 +1,8 @@
-function partition_lead_heat_flux
 %% partition_heat_flux
 % This routine partitions the incoming heat flux Q that is over open water
 % into its components,
 % some of which contribute to lateral melting, some to frazil formation,
 % and some to thickness growth
-global FSTD
-global THERMO
-global OPTS
-global EXFORC
-global OCEAN
-
 [THERMO.Al,THERMO.Ao,THERMO.Alf] = calc_lead_area(FSTD.psi,FSTD.meshR,(1-FSTD.conc),OPTS.r_p);
 
 
@@ -20,7 +13,7 @@ if OCEAN.DO
     OCEAN.Ti_Mean= integrate_FD(FSTD.psi,THERMO.T_ice,1);
     prefac = OCEAN.cp_w * dens;
     % Heat flux from ocean to ice
-    OCEAN.Q_oi =  FSTD.conc*(prefac / OCEAN.taui) * (OCEAN.T - (-2)); 
+    OCEAN.Q_oi =  FSTD.conc* prefac * (OCEAN.T - OCEAN.Tfrz); 
     
     if OCEAN.no_oi_hf
         OCEAN.Q_oi = 0;
@@ -71,5 +64,3 @@ end
 
 % THERMO.Q_vert = EXFORC.Q_oc - THERMO.Q_o - THERMO.Q_l; % Heat Flux to ice top
 THERMO.Q_bas = THERMO.Q_l - THERMO.Q_lat;
-
-end

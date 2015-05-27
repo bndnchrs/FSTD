@@ -1,15 +1,6 @@
-function FD_initialize_diagnostics
 %% FD_initialize_diagnostics
 % This code initializes all the diagnostics arrays that will be used in the
 % execution of the FSD code
-
-global DIAG
-global FSTD
-global OPTS
-global THERMO
-global MECH
-global SWELL
-global OCEAN
 
 nt = OPTS.nt; 
 

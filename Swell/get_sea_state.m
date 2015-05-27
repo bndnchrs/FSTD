@@ -1,10 +1,3 @@
-function get_sea_state
-
-global SWELL
-global FSTD
-global OPTS
-global EXFORC
-
 % get_sea_state
 
 % This function retrieves the significant wave height and zero-crossing
@@ -41,5 +34,4 @@ SWELL.rayleigh = repmat(SWELL.rayleigh',[1 length(FSTD.R) length(FSTD.H)+1]);
 % Probability of Fracture, Given by external program
 SWELL.Prob_swellfrac = get_prob_frac_FD(SWELL.bret_ampl,SWELL.rayleigh,FSTD.R,[FSTD.H FSTD.H_max],SWELL.epscrit,SWELL.Per);
 
-end
 

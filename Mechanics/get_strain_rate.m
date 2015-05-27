@@ -1,9 +1,3 @@
-function get_strain_rate
-
-global MECH
-global FSTD
-global EXFORC
-
 %% get_strain_rate
 % This routine pulls or creates the strain rate state at each large-scale
 % timestep, and assorted necessasry quantities.
@@ -57,7 +51,3 @@ costheta = MECH.eps_I/MECH.mag;
 % Opening and closing coefficients
 MECH.alpha_0 = .5*(1 + costheta);
 MECH.alpha_c = .5*(1 - costheta);
-
-%%
-
-end

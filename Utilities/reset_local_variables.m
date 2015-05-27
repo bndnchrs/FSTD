@@ -1,13 +1,3 @@
-function reset_local_variables
-
-global OPTS
-global FSTD
-global THERMO
-global MECH
-global SWELL
-global DIAG
-
-
 %% reset_local_variables
 % This code handles the resetting of matrices which are updated during each
 % sub-timestep.

@@ -1,9 +1,3 @@
-function FD_timestep_mech
-
-global FSTD
-global MECH
-global OPTS
-
 %% Function FD_timestep_mech
 % This routing calculates the tendency at each floe size and thickness
 % according to the FD parameterizations, and also updates the
@@ -280,5 +274,3 @@ MECH.diff_noadv = MECH.diff;
 MECH.diff = MECH.diff - MECH.diffadv;
 
 MECH.opening = -sum(MECH.diff(:));
-
-end

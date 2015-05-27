@@ -1,8 +1,3 @@
-function update_grid
-
-global FSTD
-global MECH
-
 % This routing updates the grids which contain the details of the largest
 % floe size as well as the ridging/rafting coefficients, and the volume of
 % each floe category. It is updated at each timestep to reflect the changes
@@ -22,6 +17,4 @@ if MECH.DO
     MECH.gamma_ridge = calc_gamma_ridge_FD([FSTD.H FSTD.H_max],meshH, MECH.H_raft);
     MECH.gamma_raft = 1 -  MECH.gamma_ridge;
     
-end
-
 end

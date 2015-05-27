@@ -1,10 +1,5 @@
-function FD_initialize_thermodynamics
 %% FD_initialize_thermodynamics
 % This routine initializes the thermodynamic component of the FD model.
-global FSTD
-global OPTS
-global THERMO
-
 
 if FSTD.DO
     

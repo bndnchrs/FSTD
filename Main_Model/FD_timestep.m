@@ -1,13 +1,5 @@
-function FD_timestep
+function [FSTD,OPTS,THERMO,MECH,SWELL,DIAG,EXFORC,OCEAN] = FD_timestep(FSTD,OPTS,THERMO,MECH,SWELL,DIAG,EXFORC,OCEAN)
 
-global OPTS
-global FSTD
-global THERMO
-global MECH
-global SWELL
-global OCEAN
-global DIAG
-global EXFORC
 
 % This code executes a single predefined timestep of the joint model by
 % performing a greedy-minimum number of sub-cycles
@@ -16,7 +8,7 @@ global EXFORC
 get_external_forcing;
 
 % Using the current thicknesses, update the propensity for ridging/rafting
-update_grid; 
+update_grid;
 
 % Reset counting variables and difference matrices
 reset_global_variables; 
@@ -122,5 +114,10 @@ end
 
 %% Update variables which are changed on each timestep
 update_global_variables; 
+
+% Compute diagnostic output
+if DIAG.DO
+    FD_Diagnostics;
+end
 
 end

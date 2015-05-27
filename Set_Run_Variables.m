@@ -1,16 +1,4 @@
-function Set_Run_Variables
-
-global OPTS
-global FSTD
-global THERMO
-global MECH
-global SWELL
-global DIAG
-global EXFORC
-global OCEAN
-
-
-
+function [FSTD,OPTS,THERMO,MECH,SWELL,DIAG,EXFORC,OCEAN]  = Set_Run_Variables(FSTD,OPTS,THERMO,MECH,SWELL,DIAG,EXFORC,OCEAN) 
 
 %% Set General options
 

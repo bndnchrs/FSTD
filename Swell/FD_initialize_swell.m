@@ -1,9 +1,6 @@
-function FD_initialize_swell
 %% FD_initialize_swell
 % This routine initializes the swell fracture code
-global FSTD
-global OPTS
-global SWELL
+
 %% Initialize Main Swell Variables
 
 if ~isfield(SWELL,'nP')
@@ -65,5 +62,3 @@ end
 %% Matrices for Handling In and Out
 SWELL.In = 0*FSTD.psi;
 SWELL.Out = 0*FSTD.psi;
-
-end

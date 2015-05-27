@@ -1,10 +1,6 @@
-function update_global_variables
 %% update_global_variables
 % This routine updates the variables that change each large-scale timestep.
 % This includes the making of diagnostic data
-
-global FSTD
-
 FSTD.A_max = sum(FSTD.psi(:,end));
 
 if FSTD.A_max > eps
