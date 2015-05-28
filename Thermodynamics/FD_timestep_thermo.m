@@ -21,37 +21,37 @@ THERMO.drdt = -THERMO.Q_lat/(OPTS.rho_ice*OPTS.L_f*FSTD.SAmean);
 % If we are heating, generally, then we might want to let some heat flux
 % reach the ocean surface rather than be in the ice.
 
-if EXFORC.Q_oc > 0 % Some small area is open to heat fom the atmosphere
-    
-    % QLmin is the small fraction
-    if isfield(OPTS,'qlmin') && OPTS.qlmin == 0;
-        % Lead fraction is at least smallfrac
-        THERMO.Al = max(THERMO.Al,THERMO.smallfrac);
-        THERMO.Q_l = THERMO.Q*THERMO.Al;
-        THERMO.Q_lat = THERMO.Q_l * (FSTD.SAmean/(FSTD.SAmean + FSTD.conc));
-        
-        % If ice concentration is zero, just say all lead heat flux is
-        % lateral
-        if FSTD.conc < eps
-            
-            THERMO.Q_lat = THERMO.Q_l;
-            
-            
-        end
-        
-        
-        if FSTD.SAmean == Inf
-            
-            THERMO.Q_lat = 0;
-            
-        end
-        
-        % Q_vert = Q - Q_o - Q_l; % Heat Flux to ice top. Not used.
-        THERMO.Q_bas = THERMO.Q_l - THERMO.Q_lat;
-        
-    end
-    
-end
+% if EXFORC.Q_oc > 0 % Some small area is open to heat fom the atmosphere
+%     
+%     % QLmin is the small fraction
+%     if isfield(OPTS,'qlmin') && OPTS.qlmin == 0;
+%         % Lead fraction is at least smallfrac
+%         THERMO.Al = max(THERMO.Al,THERMO.smallfrac);
+%         THERMO.Q_l = THERMO.Q*THERMO.Al;
+%         THERMO.Q_lat = THERMO.Q_l * (FSTD.SAmean/(FSTD.SAmean + FSTD.conc));
+%         
+%         % If ice concentration is zero, just say all lead heat flux is
+%         % lateral
+%         if FSTD.conc < eps
+%             
+%             THERMO.Q_lat = THERMO.Q_l;
+%             
+%             
+%         end
+%         
+%         
+%         if FSTD.SAmean == Inf
+%             
+%             THERMO.Q_lat = 0;
+%             
+%         end
+%         
+%         % Q_vert = Q - Q_o - Q_l; % Heat Flux to ice top. Not used.
+%         THERMO.Q_bas = THERMO.Q_l - THERMO.Q_lat;
+%         
+%     end
+%     
+% end
 
 % This is the lateral growth rate per floe
 THERMO.drdt = -THERMO.Q_lat/(OPTS.rho_ice*OPTS.L_f*(FSTD.SAmean));

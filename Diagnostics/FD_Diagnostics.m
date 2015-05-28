@@ -111,6 +111,10 @@ if THERMO.DO
     %  DIAG.Toc(ind) = T_ocean;
     % Heat fluxes saved
     DIAG.Qpartition(ind,:) = [THERMO.Q_o THERMO.Q_lat THERMO.Q_bas];
+    
+    DIAG.Q_ocean(ind) = EXFORC.Q_oc; 
+    DIAG.Fc(ind,:) = THERMO.Q_cond; 
+
     % Total Surface area
     DIAG.SA(ind) = FSTD.SAmean;
     % Lead fraction
@@ -145,5 +149,6 @@ if OCEAN.DO
     DIAG.OCELW(ind) = OCEAN.LW;
     DIAG.OCESW(ind) = OCEAN.SW;
     DIAG.OCESH(ind) = OCEAN.SH;
+    
 end
 
