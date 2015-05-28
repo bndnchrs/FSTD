@@ -3,7 +3,6 @@
 % the floe distribution itself and many of the diagnostics
 
 %% Timestepping
-
 % Times
 OPTS.hour = 3600; 
 OPTS.day = 24*OPTS.hour; 

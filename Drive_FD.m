@@ -23,27 +23,24 @@
 % struct DIAG % Contains diagnostics
 % struct EXFORC % Contains External Forcing
 
-clear all
-
-FSTD = struct(); 
-OPTS = struct();
-THERMO = struct(); 
-MECH = struct(); 
-SWELL = struct(); 
-OCEAN = struct(); 
-DIAG = struct(); 
-EXFORC = struct(); 
-
-
 %% Actually Run the Model
+
+clear 
+
+Initialize_Run_Wrapper; 
+
 
 for runnum = 1:OPTS.numruns
     
+    Initialize_Run_Wrapper; 
+
     OPTS.run_number = runnum; 
-    
+
     [FSTD,OPTS,THERMO,MECH,SWELL,DIAG,EXFORC,OCEAN] = Set_General_Run_Variables(FSTD,OPTS,THERMO,MECH,SWELL,DIAG,EXFORC,OCEAN);
     [FSTD,OPTS,THERMO,MECH,SWELL,DIAG,EXFORC,OCEAN] = Set_Specific_Run_Variables(runnum,FSTD,OPTS,THERMO,MECH,SWELL,DIAG,EXFORC,OCEAN);
     [FSTD,OPTS,THERMO,MECH,SWELL,DIAG,EXFORC,OCEAN] = FD_Run(FSTD,OPTS,THERMO,MECH,SWELL,DIAG,EXFORC,OCEAN) ;
+    
+    save(OPTS.NAMES{OPTS.run_number},'-v7.3')
 
 end
 
@@ -51,6 +48,5 @@ end
 
 if FSTD.DO
     
-    save(OPTS.NAMES{OPTS.run_number},'-v7.3')
     
 end

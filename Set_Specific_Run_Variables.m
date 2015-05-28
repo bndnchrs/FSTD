@@ -18,12 +18,22 @@ EXFORC.nu(1:OPTS.nt,2) = MECH.eps_II;
 EXFORC.compressing = ones(1,OPTS.nt);
 
 %% Set Thermodynamics External Forcing
-EXFORC.QLW = 200 *ones(1,OPTS.nt);
-EXFORC.QSW = 300 * ones(1,OPTS.nt); % * sin(2*pi*OPTS.time/OPTS.year);
+
+oner = zeros(1,168*2); 
+oner(1:end) = 1; 
+oner = 300*oner; 
+
+EXFORC.QLW = 200 * ones(1,OPTS.nt);
+
+EXFORC.QSW = repmat(oner,[1 OPTS.nt/336]); 
+% EXFORC.QSW = 300 * ones(1,OPTS.nt); % * sin(2*pi*OPTS.time/OPTS.year);
 
 %% Set Swell Fracture External Forcing
 
-EXFORC.stormy = 1 + zeros(1,OPTS.nt);
+load('Input_Files/Storm_Files/Binary_Storms')
+
+EXFORC.stormy = storms(runnum) + zeros(1,OPTS.nt);
+
 
 %% Initial Conditions
 
