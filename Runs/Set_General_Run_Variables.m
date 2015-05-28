@@ -25,6 +25,9 @@ FSTD.H = .1:OPTS.dh:2.5;
 
 %% Just get the basic fields we need
 OPTS.first_init = 1;
+
+addpath('Main_Model')
+
 [FSTD,OPTS,THERMO,MECH,SWELL,DIAG,EXFORC,OCEAN] = Initialize_FD(FSTD,OPTS,THERMO,MECH,SWELL,DIAG,EXFORC,OCEAN); 
 
 %% Set Thermodynamic Options

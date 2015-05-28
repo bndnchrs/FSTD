@@ -27,8 +27,11 @@
 
 clear 
 
-Initialize_Run_Wrapper; 
+location_of_files = 'Runs/Stormsorno'
 
+addpath(location_of_files)
+
+Initialize_Run_Wrapper; 
 
 for runnum = 1:OPTS.numruns
     
