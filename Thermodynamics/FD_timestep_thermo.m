@@ -95,6 +95,9 @@ end
 v_r = repmat(THERMO.drdt,size(FSTD.psi));
 v_h = repmat(THERMO.dhdt,[length(FSTD.R),1]);
 
+% This is the simple upwind advection scheme for doing this. It conserves
+% volume and area as in Hibler (1980)
+
 [THERMO.adv_tend,THERMO.meltoutR,THERMO.meltoutH] = advect2_upwind(FSTD.psi,FSTD.R,[FSTD.H FSTD.H_max],v_r,v_h,OPTS.dt_sub,THERMO.allow_adv_loss_R,THERMO.allow_adv_loss_H);
 
 if(isnan(sum(THERMO.adv_tend(:))))

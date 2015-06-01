@@ -31,7 +31,7 @@ location_of_files = 'Runs/Stormsorno';
 
 addpath(location_of_files)
 
-Initialize_Run_Wrapper; 
+Initialize_Run_Wrapper;
 
 for runnum = 1:OPTS.numruns
     
@@ -43,7 +43,7 @@ for runnum = 1:OPTS.numruns
     [FSTD,OPTS,THERMO,MECH,SWELL,DIAG,EXFORC,OCEAN] = Set_Specific_Run_Variables(runnum,FSTD,OPTS,THERMO,MECH,SWELL,DIAG,EXFORC,OCEAN);
     [FSTD,OPTS,THERMO,MECH,SWELL,DIAG,EXFORC,OCEAN] = FD_Run(FSTD,OPTS,THERMO,MECH,SWELL,DIAG,EXFORC,OCEAN) ;
     
-    save(OPTS.NAMES{OPTS.run_number},'-v7.3')
+    save(['../FSTD-OUTPUT/' OPTS.NAMES{OPTS.run_number}],'-v7.3')
 
 end
 

@@ -25,7 +25,7 @@ oner = 300*oner;
 
 EXFORC.QLW = 200 * ones(1,OPTS.nt);
 
-EXFORC.QSW = repmat(oner,[1 OPTS.nt/336]); 
+EXFORC.QSW = repmat(oner,[1 ceil(OPTS.nt/336)]); 
 % EXFORC.QSW = 300 * ones(1,OPTS.nt); % * sin(2*pi*OPTS.time/OPTS.year);
 
 %% Set Swell Fracture External Forcing
@@ -38,10 +38,10 @@ SWELL.DO = storms(runnum);
 
 %% Initial Conditions
 % Initial Distribution has all ice at one floe size. 
-var = [2.5^2 125^2];
+var = [2.5^2 .125^2];
 
 % ps1 = mvnpdf([FSTD.meshR(:) FSTD.meshH(:)],[15 1.5],var);
-psi = mvnpdf([FSTD.meshR(:) FSTD.meshH(:)],[87.5 .3],var);
+psi = mvnpdf([FSTD.meshR(:) FSTD.meshH(:)],[87.5 1.1],var);
 % psi = ps2/sum(ps2(:));
 psi = reshape(psi,length(FSTD.R),length(FSTD.H)+1);
 FSTD.psi = .9*psi/sum(psi(:));

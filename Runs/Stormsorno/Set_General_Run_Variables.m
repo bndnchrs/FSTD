@@ -2,7 +2,8 @@ function [FSTD,OPTS,THERMO,MECH,SWELL,DIAG,EXFORC,OCEAN]  = Set_General_Run_Vari
 
 %% Set General options
 
-OPTS.nt = 24*7*16*10; % Number of timesteps
+OPTS.nt = 24*7*52; % Number of timesteps
+OPTS.nt = 2932; 
 OPTS.dt = 3600; % Timestep duration
 OPTS.dr = 2; % Size increment
 OPTS.nh = 13; % No. thickness categories

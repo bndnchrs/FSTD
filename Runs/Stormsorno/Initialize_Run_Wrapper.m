@@ -10,6 +10,6 @@ DIAG = struct();
 EXFORC = struct(); 
 
 
-OPTS.numruns = 2; 
-OPTS.NAMES = {'SavedOutput/Storms_Tmelt',...
-    'SavedOutput/NoStorms_Tmelt'};
+OPTS.numruns = 1; 
+OPTS.NAMES = {'SavedOutput/Storms_Tmelt_1thick1m_noadv_dummy',...
+    'SavedOutput/NoStorms_Tmelt_1thick1m_noadv'};
