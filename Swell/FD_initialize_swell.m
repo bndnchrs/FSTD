@@ -17,6 +17,11 @@ if ~isfield(SWELL,'Per')
      
 end
 
+if ~isfield(SWELL,'prescribe_spec')
+    % Whether the wave spectrum is imposed or not
+    SWELL.prescribe_spec = 0; 
+end
+
 if ~isfield(SWELL,'H_s')
     SWELL.H_s = 2; % Significant Wave Height
 end

@@ -2,8 +2,8 @@ function [FSTD,OPTS,THERMO,MECH,SWELL,DIAG,EXFORC,OCEAN]  = Set_General_Run_Vari
 
 %% Set General options
 
-OPTS.nt = 24*7*52; % Number of timesteps
-OPTS.nt = 2932; 
+OPTS.nt = 24*7*12; % Number of timesteps
+% OPTS.nt = 1; 
 OPTS.dt = 3600; % Timestep duration
 OPTS.dr = 2; % Size increment
 OPTS.nh = 13; % No. thickness categories
@@ -33,7 +33,7 @@ addpath('Main_Model')
 
 %% Set Thermodynamic Options
 
-OPTS.SHLambda = 1/100; 
+OPTS.SHLambda = 0*1/100; 
 
 
 %% Set Swell Fracture Options
@@ -41,6 +41,5 @@ OPTS.Domainwidth = 5e4;
 SWELL.epscrit = .01;
 
 %% Set Ocean Options
-OCEAN.taui = 86400; 
 OCEAN.no_oi_hf = 0; 
 OCEAN.H = 50; 

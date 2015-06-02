@@ -1,6 +1,6 @@
 % little plotting routine
-loadnames = {'../../SavedOutput/Storms_Tmelt_1thick1m',...
-    '../../SavedOutput/NoStorms_Tmelt_1thick1m'};
+loadnames = {'../FSTD-OUTPUT/Storms_Tmelt_1thick1m',...
+    '../FSTD-OUTPUT/NoStorms_Tmelt_1thick1m'};
 
 %%
 savename = 'Comp_1thick1m_adv'; 

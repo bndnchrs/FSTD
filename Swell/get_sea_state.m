@@ -10,10 +10,14 @@ sigwaveheight = SWELL.H_s; % meters
 % Zero-Crossing Period
 zcperiod = SWELL.P_z; 
 
-% Bretschneider Spectrum
-SWELL.bret_spec = (1/(4*pi))*(sigwaveheight^2/zcperiod).*(SWELL.Per/zcperiod).^3 .* ... 
+if SWELL.prescribe_spec
+    % If we want to prescribe the spectrum
+    SWELL.bret_spec = EXFORC.wavespec(FSTD.i,:);
+else
+    % Bretschneider Spectrum
+    SWELL.bret_spec = (1/(4*pi))*(sigwaveheight^2/zcperiod).*(SWELL.Per/zcperiod).^3 .* ... 
     exp((-1/pi) * (SWELL.Per/zcperiod).^4); 
-
+end
 % bret_spec = 0*bret_spec;
 % bret_spec(44) = 1; 
 
