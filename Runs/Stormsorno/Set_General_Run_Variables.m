@@ -33,8 +33,6 @@ addpath('Main_Model')
 
 %% Set Thermodynamic Options
 
-THERMO.allow_adv_loss_H = 0; % Allow for loss of ice through decreasing thickness
-THERMO.allow_adv_loss_R = 0;
 OPTS.SHLambda = 1/100; 
 
 

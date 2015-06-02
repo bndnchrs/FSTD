@@ -60,8 +60,12 @@ if FSTD.DO
     
     % Whether we allow the thermodynamic loss of thickness to lead to a
     % loss of concentration directly
-    if ~isfield(THERMO,'allow_adv_loss')
-        THERMO.allow_adv_loss = 0;
+    if ~isfield(THERMO,'allow_adv_loss_H')
+        THERMO.allow_adv_loss_H = 1; % By default, we let this happen
+    end
+    
+    if ~isfield(THERMO,'allow_adv_loss_R')
+        THERMO.allow_adv_loss_R = 1; % By default, we let this happen
     end
     
 else
