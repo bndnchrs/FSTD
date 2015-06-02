@@ -11,5 +11,5 @@ EXFORC = struct();
 
 
 OPTS.numruns = 1; 
-OPTS.NAMES = {'SavedOutput/Storms_Tmelt_1thick1m_noadv_dummy',...
-    'SavedOutput/NoStorms_Tmelt_1thick1m_noadv'};
+OPTS.NAMES = {'Storms_Tmelt_1thick1m',...
+    'NoStorms_Tmelt_1thick1m'};
