@@ -35,11 +35,12 @@ load('Input_Files/Storm_Files/Binary_Storms')
 SWELL.prescribe_spec = 1; 
 
 EXFORC.stormy = storms(runnum) + zeros(1,OPTS.nt);
+EXFORC.stormy(336:end) = 0; 
 EXFORC.wavespec = zeros(OPTS.nt,length(FSTD.R)); 
 EXFORC.wavespec(:,34) = 1; 
 
 SWELL.DO = storms(runnum); 
-SWELL.DomainWidth = 1e3; 
+OPTS.Domainwidth = 1e3; 
 
 %% Set Ocean Forcing/Variables
 
@@ -50,7 +51,7 @@ OCEAN.T = -1.8;
 var = [2.5^2 .125^2];
 
 % ps1 = mvnpdf([FSTD.meshR(:) FSTD.meshH(:)],[15 1.5],var);
-psi = mvnpdf([FSTD.meshR(:) FSTD.meshH(:)],[142.4 1.1],var);
+psi = mvnpdf([FSTD.meshR(:) FSTD.meshH(:)],[250 1.1],var);
 % psi = ps2/sum(ps2(:));
 psi = reshape(psi,length(FSTD.R),length(FSTD.H)+1);
 FSTD.psi = .9*psi/sum(psi(:));

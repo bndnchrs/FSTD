@@ -2,7 +2,7 @@ function [FSTD,OPTS,THERMO,MECH,SWELL,DIAG,EXFORC,OCEAN]  = Set_General_Run_Vari
 
 %% Set General options
 
-OPTS.nt = 24*7*12; % Number of timesteps
+OPTS.nt = 24*7*52; % Number of timesteps
 % OPTS.nt = 1; 
 OPTS.dt = 3600; % Timestep duration
 OPTS.dr = 2; % Size increment
@@ -14,7 +14,7 @@ OPTS.time = linspace(OPTS.dt,OPTS.nt*OPTS.dt,OPTS.nt);
 
 % Initial discretization
 RR(1) = .5;
-for i = 2:64
+for i = 2:70
     RR(i) = sqrt(2*RR(i-1)^2 - (4/5) * RR(i-1)^2);
 end
 OPTS.nr = length(RR); % Number of size categories
