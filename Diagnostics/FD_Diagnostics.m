@@ -93,6 +93,9 @@ if MECH.DO && MECH.mag~=0
     % Amount of opening due to leaving the domain
     DIAG.opensave(ind) = MECH.divopening;
     
+    if MECH.simple_oc_sr
+        DIAG.ocicfac = MECH.oc_to_ic;
+    end
     
 end
 

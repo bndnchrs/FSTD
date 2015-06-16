@@ -97,7 +97,14 @@ while OPTS.dt_sub > 0
     
     end
     
-  
+    
+    if THERMO.DO && THERMO.mergefloes
+        FD_merge_floes; 
+        FSTD.diff = FSTD.diff + THERMO.diff_merge; 
+        % merging preserves area
+        % FSTD.opening = FSTD.opening + THERMO.opening_merge; 
+        FSTD.V_max_in = FSTD.V_max_in + THERMO.V_max_in_merge; 
+    end
         
     
     %% Update the main variables psi and openwater
@@ -115,6 +122,12 @@ while OPTS.dt_sub > 0
     end
     
 end
+
+    
+    
+    
+    
+    
 
 %% Update variables which are changed on each timestep
 update_global_variables; 

@@ -79,6 +79,13 @@ if ~isfield(OCEAN,'taui')
     OCEAN.taui = .5*86400; % Relaxation timescale of ice temperature
 end
 
+if ~isfield(OCEAN,'StrainInvar') && MECH.DO
+    % The ocean strain rate tensor, 2 by nt long
+    OCEAN.StrainInvar = zeros(2,FSTD.nt); 
+end
+
+
+
 if ~isfield(OCEAN,'EOS')
     OCEAN.EOS = @(T,S) OCEAN.rho_w * (1 - OCEAN.alpha_T * (T - OCEAN.T_0) ...
         + OCEAN.beta_S * ( S - OCEAN.S_0));  

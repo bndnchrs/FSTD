@@ -81,6 +81,11 @@ if THERMO.DO
     fprintf('INITIALIZING THERMODYNAMICS \n')
     FD_initialize_thermodynamics;
     
+    if THERMO.mergefloes
+        addpath('./Merge_Floes')
+        FD_initialize_merging; 
+    end
+    
 end
 
 

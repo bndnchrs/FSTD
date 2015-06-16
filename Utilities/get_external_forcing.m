@@ -6,7 +6,7 @@ if MECH.DO
     % Get the strain rate
     get_strain_rate;
     
-end
+end    
 
 if THERMO.DO
     

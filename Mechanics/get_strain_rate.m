@@ -20,18 +20,34 @@
 %     dev = 0;
 % end
 
-% Using Random-Walk timeseries
-MECH.eps_I = EXFORC.nu(FSTD.i,1); 
-MECH.eps_II = EXFORC.nu(FSTD.i,2); 
+if isfield(MECH,'prescribenu')
+    
+    % Using Random-Walk timeseries
+    MECH.eps_I = EXFORC.nu(FSTD.i,1);
+    MECH.eps_II = EXFORC.nu(FSTD.i,2);
+    
+end
 
-% Example forced strain rate tensor
 MECH.Hmean = integrate_FD(FSTD.psi,[FSTD.H FSTD.H_max],1);
 
 if MECH.Hmean == 0
     MECH.Hmean = MECH.h_p;
 end
 
-if ~isfield(MECH,'dont_rescale_eps') || MECH.dont_rescale_eps == 0
+
+if isfield(MECH,'simple_oc_sr') && MECH.simple_oc_sr
+    % Strain rate is inferred from the ocean strain rate tensor
+    MECH.oc_to_ic = MECH.ociccoeff * (FSTD.conc * MECH.H_0/MECH.Hmean) * ( 1 - exp(-(1-FSTD.conc)/MECH.ocicdelta));  
+    
+    % Convert the ocean strain rate tensor by the above factor
+    MECH.eps_I = OCEAN.StrainInvar(1,FSTD.i) * MECH.oc_to_ic; 
+    MECH.eps_II = OCEAN.StrainInvar(2,FSTD.i) * MECH.oc_to_ic; 
+    
+end
+   
+  
+if isfield(MECH,'rescale_eps') && MECH.rescale_eps
+    % A seperate rescaling in the ice thickness and concentration
     
     MECH.eps_I = MECH.eps_I*(FSTD.conc)*(MECH.H_0/MECH.Hmean);
     MECH.eps_II = MECH.eps_II*(FSTD.conc)*(MECH.H_0/MECH.Hmean);
@@ -39,8 +55,8 @@ if ~isfield(MECH,'dont_rescale_eps') || MECH.dont_rescale_eps == 0
 end
 
 %% This is for cases in which we want to turn off and on mech
-MECH.eps_I = MECH.eps_I * EXFORC.compressing(FSTD.i); 
-MECH.eps_II = MECH.eps_II * EXFORC.compressing(FSTD.i); 
+MECH.eps_I = MECH.eps_I * EXFORC.compressing(FSTD.i);
+MECH.eps_II = MECH.eps_II * EXFORC.compressing(FSTD.i);
 
 %%
 % Magnitude of Strain Rate Tensor

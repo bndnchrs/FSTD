@@ -44,6 +44,10 @@ if MECH.DO == 1
     DIAG.THETA = 0*(1:nt);
     DIAG.P = 0*(1:nt);
     DIAG.fulldiffmech = 0*DIAG.psi; 
+ 
+    if MECH.simple_oc_sr
+        DIAG.ocicfac = 0*(1:nt); 
+    end
     
 end
 

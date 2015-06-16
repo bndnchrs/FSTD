@@ -16,6 +16,14 @@ end
 
 %%
 
+if THERMO.DO
+    
+    if THERMO.mergefloes
+        THERMO.gain_merge = 0*FSTD.psi;
+        THERMO.loss_merge = 0*FSTD.psi; 
+    end
+    
+end
 
 if MECH.DO
     

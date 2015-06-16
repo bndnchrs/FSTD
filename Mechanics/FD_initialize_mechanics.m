@@ -64,6 +64,25 @@ if FSTD.DO
         
     end
     
+    if ~isfield(MECH,'simple_oc_sr')
+        % Infer the strain rate tensor simply from the ocean
+        MECH.simple_oc_sr = 0; 
+        
+    end
+    
+    if MECH.simple_oc_sr
+        
+        % Coefficient of drag between ocean and ice
+        MECH.ociccoeff = 1e-2; 
+        % fall-off coefficient as concentration --> 1
+        MECH.ocicdelta = 10; 
+        
+        if ~OCEAN.DO
+            error('need ocean to enable the simple ocean strain rate-ice strain rate code')
+        end
+        
+    end
+    
     if ~isfield('MECH','dont_guarantee_bigger')
         MECH.dont_guarantee_bigger=0;
     end
