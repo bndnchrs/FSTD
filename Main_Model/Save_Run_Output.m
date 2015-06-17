@@ -4,6 +4,6 @@ function Save_Run_Output(FSTD,OPTS,THERMO,MECH,SWELL,DIAG,EXFORC,OCEAN)
 % way to allow it to be nested inside a parfor loop
 
 % Save the files
-save(['../FSTD-OUTPUT/' OPTS.NAME],FSTD,OPTS,THERMO,MECH,SWELL,OCEAN,DIAG,EXFORC,'-v7.3')
+save(['../FSTD-OUTPUT/' OPTS.NAME],'FSTD','OPTS','THERMO','MECH','SWELL','OCEAN','DIAG','EXFORC','-v7.3')
 
 end

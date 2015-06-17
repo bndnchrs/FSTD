@@ -1,6 +1,17 @@
-function [FSTD,OPTS,THERMO,MECH,SWELL,DIAG,EXFORC,OCEAN]  = Set_General_Run_Variables(FSTD,OPTS,THERMO,MECH,SWELL,DIAG,EXFORC,OCEAN) 
+function [FSTD,OPTS,THERMO,MECH,SWELL,DIAG,EXFORC,OCEAN]  = Set_General_Run_Variables(runnum,NAMES) 
+%%
+FSTD = struct(); 
+OPTS = struct(); 
+THERMO = struct(); 
+MECH = struct(); 
+SWELL = struct(); 
+OCEAN = struct(); 
+DIAG = struct(); 
+EXFORC = struct(); 
 
 %% Set General options
+OPTS.runnum = runnum; 
+OPTS.NAME = NAMES{runnum};
 
 OPTS.nt = 12*30; % Number of timesteps
 OPTS.dt = 86400; % Timestep duration

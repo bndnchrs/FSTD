@@ -34,7 +34,10 @@ addpath(location_of_files)
 % Initialize the basic run variables (save locations, etc)
 Initialize_Run_Wrapper;
 
-parfor runnum = 1:numruns
+
+%%
+for runnum = 1:numruns
+    %%
     
     % This creates the structures and sets the general variables
     [FSTD,OPTS,THERMO,MECH,SWELL,DIAG,EXFORC,OCEAN] = Set_General_Run_Variables(runnum,NAMES);

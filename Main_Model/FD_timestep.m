@@ -50,11 +50,25 @@ while OPTS.dt_sub > 0
         else
             FD_timestep_thermo;
         end
+        
         FSTD.diff = FSTD.diff + THERMO.diff; 
         FSTD.opening = FSTD.opening + THERMO.opening; 
         FSTD.V_max_in = FSTD.V_max_in + THERMO.V_max_in; 
         FSTD.V_max_out = FSTD.V_max_out + THERMO.V_max_out; 
       
+    end
+    
+    %% Do Merging of Floes Thermodynamically
+    
+    if THERMO.DO && THERMO.mergefloes
+        
+        FD_merge_floes;
+        FSTD.diff = FSTD.diff + THERMO.diff_merge;
+        
+        % merging preserves area so there is no opening term
+    
+        FSTD.V_max_in = FSTD.V_max_in + THERMO.V_max_in_merge;
+        
     end
     
     %% Get Change Due to Swell
@@ -67,21 +81,9 @@ while OPTS.dt_sub > 0
         FSTD.V_max_out = FSTD.V_max_out + SWELL.V_max_out; 
     
     end
-        
-    %%
-    FSTD.dV_max = FSTD.V_max_in - FSTD.V_max_out; 
-    
-    % Calculate Changes Due to Interaction
-
-    %% Minimal Timestep
-    % Calculate the maximal timestep possible to keep the solution legal    
-    OPTS.dt_temp = calc_max_timestep(FSTD.psi,FSTD.diff,OPTS.dt_temp);
-    
-    %%
-    OPTS.dt_temp = calc_max_timestep(FSTD.V_max,FSTD.dV_max(end,end),OPTS.dt_temp,1);
-    
-    %% 
-    
+       
+    %% Do pancake growth, ocean heat fluxes, and salt fluxes
+       
     if OCEAN.DO
         
         timestep_ocean;        
@@ -92,42 +94,36 @@ while OPTS.dt_sub > 0
         FSTD.opening = FSTD.opening + OCEAN.opening; 
         FSTD.V_max_in = FSTD.V_max_in + OCEAN.V_max_in; 
        
-        update_ocean; 
-                
-    
-    end
-    
-    
-    if THERMO.DO && THERMO.mergefloes
-        FD_merge_floes; 
-        FSTD.diff = FSTD.diff + THERMO.diff_merge; 
-        % merging preserves area
-        % FSTD.opening = FSTD.opening + THERMO.opening_merge; 
-        FSTD.V_max_in = FSTD.V_max_in + THERMO.V_max_in_merge; 
     end
         
+    FSTD.dV_max = FSTD.V_max_in - FSTD.V_max_out; 
+
+    %% Maximal Timestep
+    % Calculate the maximal timestep possible to keep the solution legal    
+    OPTS.dt_temp = calc_max_timestep(FSTD.psi,FSTD.diff,OPTS.dt_temp);
+    OPTS.dt_temp = calc_max_timestep(FSTD.V_max,FSTD.dV_max(end,end),OPTS.dt_temp,1);
     
-    %% Update the main variables psi and openwater
+    
+    %% Update the main variables psi, openwater, and ocean variables
     update_psi;
     
+    if OCEAN.DO
+        update_ocean;                 
+    end
     
     %% Update those local variables which will change on each timestep
     update_local_variables; 
-    
-    
+
+    %% Check to make sure the solutions are legal
     check_FD;
     
+    %% If we've thrown an error, lets leave this place
     if FSTD.eflag
         return 
     end
     
 end
 
-    
-    
-    
-    
-    
 
 %% Update variables which are changed on each timestep
 update_global_variables; 

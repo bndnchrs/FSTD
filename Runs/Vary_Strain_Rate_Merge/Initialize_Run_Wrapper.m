@@ -1,9 +1,9 @@
 %% Initialize_Run_Wrapper
-OPTS.numruns = 6;
+numruns = 6;
 % 6 Runs
 % Strain rate ~ net one redistribution per year with or without floe
 % merging
 % Strain rate ~ net two "
 % No strain rate "
 
-OPTS.NAMES = {'Merge_SR1','NoMerge_SR1','Merge_SR2','NoMerge_SR2','Merge_noconv','NoMerge_noconv'};
+NAMES = {'Merge_SR1','NoMerge_SR1','Merge_SR2','NoMerge_SR2','Merge_noconv','NoMerge_noconv'};
