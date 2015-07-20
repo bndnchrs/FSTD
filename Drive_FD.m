@@ -28,28 +28,28 @@
 clear
 
 % This is where the input files will be located. Add them into the PATH. 
-location_of_files = 'Runs/Vary_Strain_Rate_Merge';
+location_of_files = 'Runs/Example_Advect';
 addpath(location_of_files)
 
 % Initialize the basic run variables (save locations, etc)
 Initialize_Run_Wrapper;
 
-
+% parpool(2)
 %%
 for runnum = 1:numruns
     %%
     
     % This creates the structures and sets the general variables
-    [FSTD,OPTS,THERMO,MECH,SWELL,DIAG,EXFORC,OCEAN] = Set_General_Run_Variables(runnum,NAMES);
+    [FSTD,OPTS,THERMO,MECH,SWELL,DIAG,EXFORC,OCEAN,ADVECT] = Set_General_Run_Variables(runnum,NAMES);
     
     % This sets the run-specific variables
-    [FSTD,OPTS,THERMO,MECH,SWELL,DIAG,EXFORC,OCEAN] = Set_Specific_Run_Variables(runnum,FSTD,OPTS,THERMO,MECH,SWELL,DIAG,EXFORC,OCEAN);
+    [FSTD,OPTS,THERMO,MECH,SWELL,DIAG,EXFORC,OCEAN,ADVECT] = Set_Specific_Run_Variables(runnum,FSTD,OPTS,THERMO,MECH,SWELL,DIAG,EXFORC,OCEAN,ADVECT);
     
     % This actually runs the damn thing
-    [FSTD,OPTS,THERMO,MECH,SWELL,DIAG,EXFORC,OCEAN] = FD_Run(FSTD,OPTS,THERMO,MECH,SWELL,DIAG,EXFORC,OCEAN) ;
+    [FSTD,OPTS,THERMO,MECH,SWELL,DIAG,EXFORC,OCEAN,ADVECT] = FD_Run(FSTD,OPTS,THERMO,MECH,SWELL,DIAG,EXFORC,OCEAN,ADVECT) ;
     
     % This saves it. Sent as a function to be compatible with parfor
-    Save_Run_Output(FSTD,OPTS,THERMO,MECH,SWELL,DIAG,EXFORC,OCEAN);
+    Save_Run_Output(FSTD,OPTS,THERMO,MECH,SWELL,DIAG,EXFORC,OCEAN,ADVECT);
     %  save(['../FSTD-OUTPUT/' OPTS.NAMES{OPTS.run_number}],'-v7.3')
     
 end

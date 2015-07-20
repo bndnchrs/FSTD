@@ -13,7 +13,7 @@ if OCEAN.DO
     OCEAN.Ti_Mean= integrate_FD(FSTD.psi,THERMO.T_ice,1);
     prefac = OCEAN.cp_w * dens * OCEAN.ustar_oceice;
     % Heat flux from ocean to ice
-    OCEAN.Q_oi =  FSTD.conc* prefac * (OCEAN.T - OCEAN.Tfrz); 
+    OCEAN.Q_oi =  FSTD.conc* prefac * (OCEAN.T - OCEAN.Tfrz);
     
     if OCEAN.no_oi_hf
         OCEAN.Q_oi = 0;
@@ -21,35 +21,35 @@ if OCEAN.DO
     
 end
 
-THERMO.Q_o = THERMO.Ao*EXFORC.Q_oc; % Heat Flux to open water. 
+THERMO.Q_o = THERMO.Ao*EXFORC.Q_oc; % Heat Flux to open water.
 
 % And if there is a heat flux from the ocean to the ice, remove it here
 % from the over-water heat budget
 if OCEAN.DO
-    THERMO.Q_o = THERMO.Q_o - OCEAN.Q_oi; 
+    THERMO.Q_o = THERMO.Q_o - OCEAN.Q_oi;
 end
 
-% if Ao < smallfrac && Q < 0 % Open a little tiny bit at all times
-%    Ao = min(1-conc,smallfrac); % Either the open water or the smallest fraction, whichever smaller
-%    Q_o = Ao*Q; % Heat Flux to open water
-%    Al = 1 - conc - Ao; % The rest is lad fraction
-% end
+if THERMO.Ao < .05 && EXFORC.Q_oc > 0 %  && EXFORC.Q_oc < 0 && FSTD.conc < 1 % Open a little tiny bit at all times
+    THERMO.Ao = max(0,min(1-FSTD.conc,.05)); % Either the open water or the smallest fraction, whichever smaller
+    THERMO.Q_o = THERMO.Ao*EXFORC.Q_oc; % Heat Flux to open water
+    THERMO.Al = 1 - FSTD.conc - THERMO.Ao; % The rest is lad fraction
+end
 
 THERMO.Q_l = THERMO.Al*EXFORC.Q_oc; % Total Net Heat Flux to lateral/basal surface
 
-if OCEAN.DO 
-    THERMO.Q_l = THERMO.Q_l + OCEAN.Q_oi; 
+if OCEAN.DO
+    THERMO.Q_l = THERMO.Q_l + OCEAN.Q_oi;
 end
 
 THERMO.lbrat = (FSTD.SAmean/(FSTD.SAmean + FSTD.conc));
 
 
-THERMO.Q_lat = THERMO.Q_l * THERMO.lbrat; 
+THERMO.Q_lat = THERMO.Q_l * THERMO.lbrat;
 
 if FSTD.conc < eps
     
     THERMO.Q_lat = THERMO.Q_l;
-    THERMO.lbrat = 1; 
+    THERMO.lbrat = 1;
     
 end
 

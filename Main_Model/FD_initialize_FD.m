@@ -117,6 +117,12 @@ FSTD.V_max_in = 0;
 FSTD.V_max_out = 0;
 FSTD.V_max = 0; 
 
+OPTS.H_0 = integrate_FD(FSTD.psi,[FSTD.H FSTD.H_max],1);
+
+if OPTS.H_0 == 0
+    OPTS.H_0 = OPTS.h_p;
+end
+
 %% Dual Distribution
 
 % 2-D matrix of size, thickness, and volume
@@ -131,6 +137,7 @@ if ~isfield(FSTD,'psi')
     FSTD.psi = zeros(length(FSTD.R),length(FSTD.H)+1);
     
 end
+
 
 % Updating variables
 

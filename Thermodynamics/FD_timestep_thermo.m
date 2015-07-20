@@ -102,7 +102,8 @@ v_h = repmat(THERMO.dhdt,[length(FSTD.R),1]);
 
 if(isnan(sum(THERMO.adv_tend(:))))
     
-    error('isnan advtend');
+    FSTD.eflag = 1; 
+    disp('isnan advtend');
     
 end
 

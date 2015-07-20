@@ -1,4 +1,4 @@
-function [FSTD,OPTS,THERMO,MECH,SWELL,DIAG,EXFORC,OCEAN] = FD_Run(FSTD,OPTS,THERMO,MECH,SWELL,DIAG,EXFORC,OCEAN)
+function [FSTD,OPTS,THERMO,MECH,SWELL,DIAG,EXFORC,OCEAN,ADVECT] = FD_Run(FSTD,OPTS,THERMO,MECH,SWELL,DIAG,EXFORC,OCEAN,ADVECT)
 %% FD_Run
 % This is the main driver of a single simulation: it uses
 % previously initialized conditions and variables to simulate the floe
@@ -37,14 +37,14 @@ DIAG.PLOT_FirstStep = 0;
 for i =  OPTS.start_it: OPTS.end_it
     
     FSTD.i = i;
-    
+       
     %%
     % Execute one timestep of the model
     
     if FSTD.DO
         
         
-        [FSTD,OPTS,THERMO,MECH,SWELL,DIAG,EXFORC,OCEAN] = FD_timestep(FSTD,OPTS,THERMO,MECH,SWELL,DIAG,EXFORC,OCEAN);
+        [FSTD,OPTS,THERMO,MECH,SWELL,DIAG,EXFORC,OCEAN,ADVECT] = FD_timestep(FSTD,OPTS,THERMO,MECH,SWELL,DIAG,EXFORC,OCEAN,ADVECT);
        
         
         % Print output and check for errors

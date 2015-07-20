@@ -14,6 +14,12 @@ if ~isfield(OCEAN,'S')
     
 end
 
+if ~isfield(OCEAN,'lambda_ll')
+
+    OCEAN.lambda_ll = 7*86400; 
+
+end
+
 if ~isfield(OCEAN,'T')
     
     OCEAN.T = 0; % Mixed Layer Temp

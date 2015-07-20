@@ -98,5 +98,6 @@ if OCEAN.DO
     DIAG.OCELW = 0*(1:nt); 
     DIAG.OCESW = 0*(1:nt); 
     DIAG.OCESH = 0*(1:nt); 
+    DIAG.OCERELAX = 0*(1:nt); 
 end
     

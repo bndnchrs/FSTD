@@ -1,4 +1,4 @@
-function [FSTD,OPTS,THERMO,MECH,SWELL,DIAG,EXFORC,OCEAN,ADVECT] = FD_timestep(FSTD,OPTS,THERMO,MECH,SWELL,DIAG,EXFORC,OCEAN,ADVECT)
+function [FSTD,OPTS,THERMO,MECH,SWELL,DIAG,EXFORC,OCEAN] = FD_timestep(FSTD,OPTS,THERMO,MECH,SWELL,DIAG,EXFORC,OCEAN)
 
 
 % This code executes a single predefined timestep of the joint model by
@@ -24,11 +24,9 @@ while OPTS.dt_sub > 0
     
     if ADVECT.DO 
         
-        FSTD.diff = FSTD.diff + ADVECT.diff; 
         FD_timestep_advect; 
         FSTD.opening = FSTD.opening + ADVECT.opening;
-        FSTD.V_max_in = FSTD.V_max_in + ADVECT.V_max_in; 
-        FSTD.V_max_out = FSTD.V_max_out + ADVECT.V_max_out; 
+        FSTD.V_max_in 
         
     end
     

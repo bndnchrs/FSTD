@@ -46,10 +46,24 @@ end
 
 %% Plotting
 
-if mod(FSTD.i,OPTS.nt/10) == 0
+if mod(FSTD.i,364*4) == 0
     
     fprintf('%d Percent Complete. %d timesteps. %d subcycles \n',round(100*FSTD.i/OPTS.nt),FSTD.i,OPTS.totnum)
-    
+    subplot(221)
+    plot(DIAG.conc)
+    xlim([1 FSTD.i])
+    subplot(222)
+    plot(DIAG.H)
+    xlim([1 FSTD.i])
+    drawnow
+    subplot(223)
+    plot(DIAG.V_tot)
+    xlim([1 FSTD.i])
+    drawnow
+    subplot(224)
+    plot(DIAG.OceanT)
+    xlim([1 FSTD.i])
+    drawnow
 end
 
 

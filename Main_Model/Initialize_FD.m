@@ -1,4 +1,4 @@
-function [FSTD,OPTS,THERMO,MECH,SWELL,DIAG,EXFORC,OCEAN] = Initialize_FD(FSTD,OPTS,THERMO,MECH,SWELL,DIAG,EXFORC,OCEAN)
+function [FSTD,OPTS,THERMO,MECH,SWELL,DIAG,EXFORC,OCEAN,ADVECT] = Initialize_FD(FSTD,OPTS,THERMO,MECH,SWELL,DIAG,EXFORC,OCEAN,ADVECT)
 %% Initialize_FD
 % This second-level program contains calls to the initialization schemes
 % for each process
@@ -13,6 +13,7 @@ if OPTS.first_init == 1
     SWELL.DO = 0;
     DIAG.DO = 0;
     OCEAN.DO = 0;
+    ADVECT.DO = 0;
     DIAG.DOPLOT = 0; 
     
     fprintf('INITIALIZING MAIN MODEL \n');
@@ -35,6 +36,15 @@ if FSTD.DO
 end
 
 
+%% Initialize the Advective Mode
+if ADVECT.DO
+    
+    addpath('./Advection/')
+    fprintf('INITIALIZING ADVECTION \n')
+    initialize_advection;
+    
+    
+end
 
 
 %% Initialize the Mechanical Mode

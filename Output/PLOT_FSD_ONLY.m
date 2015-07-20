@@ -5,8 +5,6 @@ close all
 load('SavedOutput/AnnDiurn/AnnDiurn.mat','psisave');
 psAD = psisave; 
 
-
-
 load('SavedOutput/AnnDiurn/AnnDiurn.mat','concsave');
 concAD = concsave; 
 

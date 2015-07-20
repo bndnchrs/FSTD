@@ -152,6 +152,6 @@ if OCEAN.DO
     DIAG.OCELW(ind) = OCEAN.LW;
     DIAG.OCESW(ind) = OCEAN.SW;
     DIAG.OCESH(ind) = OCEAN.SH;
-    
+    DIAG.OCERELAX(ind) = OCEAN.Q_loss; 
 end
 

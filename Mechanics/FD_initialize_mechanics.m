@@ -215,13 +215,9 @@ if FSTD.DO
         
     end
     
-    MECH.H_0 = integrate_FD(FSTD.psi,[FSTD.H FSTD.H_max],1);
-    
-    if MECH.H_0 == 0
-        MECH.H_0 = OPTS.h_p;
-    end
+
     % Initial Pressure
-    MECH.P_0 = MECH.H_0*exp(-20*(1-FSTD.conc));
+    MECH.P_0 = OPTS.H_0*exp(-20*(1-FSTD.conc));
     
     %% Matrices involved in updating psi
     MECH.In = zeros(length(FSTD.R),length(FSTD.H)+1);

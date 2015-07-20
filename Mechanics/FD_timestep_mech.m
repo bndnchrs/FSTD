@@ -254,7 +254,15 @@ else
     MECH.convdiv = 1;
 end
 
+if ~ADVECT.DO
+
 MECH.diffadv = (FSTD.psi/(sum(sum(FSTD.psi))+diffeps))*MECH.divopening*MECH.convdiv;
+
+else
+    
+    MECH.diffadv = 0*FSTD.psi; 
+
+end
 
 % Here is the amount of ice volume which is lost from the largest
 % thickness category due to divergenceH

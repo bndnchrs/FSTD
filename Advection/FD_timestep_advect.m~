@@ -1,0 +1,25 @@
+%% FD_timestep_advect
+
+% Just add the ice here
+ADVECT.in = ADVECT.FSTD_in * ADVECT.fluxin;
+
+ADVECT.fluxin = ADV
+
+% The part due to mechanical divergence
+ADVECT.fluxout = MECH.divopening*MECH.convdiv;
+
+% Pure advective flux
+ADVECT.fluxout = ADVECT.fluxout + ADVECT.fluxthrough;
+
+
+if ADVECT.out_ice
+    
+    ADVECT.out = (FSTD.psi/(sum(sum(FSTD.psi))))*ADVECT.fluxout;
+   
+end
+
+ADVECT.diff = ADVECT.in - ADVECT.out; 
+
+% Really just V_max_delta
+ADVECT.V_max_in = FSTD.H_max*sum(ADVECT.diff(:,end));
+ADVECT.V_max_out = 0; 

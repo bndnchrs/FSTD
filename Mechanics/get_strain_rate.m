@@ -37,7 +37,7 @@ end
 
 if isfield(MECH,'simple_oc_sr') && MECH.simple_oc_sr
     % Strain rate is inferred from the ocean strain rate tensor
-    MECH.oc_to_ic = MECH.ociccoeff * (FSTD.conc * MECH.H_0/MECH.Hmean) * ( 1 - exp(-(1-FSTD.conc)/MECH.ocicdelta));  
+    MECH.oc_to_ic = MECH.ociccoeff * (FSTD.conc * OPTS.H_0/MECH.Hmean) * ( 1 - exp(-(1-FSTD.conc)/MECH.ocicdelta));  
     
     % Convert the ocean strain rate tensor by the above factor
     MECH.eps_I = OCEAN.StrainInvar(1,FSTD.i) * MECH.oc_to_ic; 
@@ -49,8 +49,8 @@ end
 if isfield(MECH,'rescale_eps') && MECH.rescale_eps
     % A seperate rescaling in the ice thickness and concentration
     
-    MECH.eps_I = MECH.eps_I*(FSTD.conc)*(MECH.H_0/MECH.Hmean);
-    MECH.eps_II = MECH.eps_II*(FSTD.conc)*(MECH.H_0/MECH.Hmean);
+    MECH.eps_I = MECH.eps_I*(FSTD.conc)*(OPTS.H_0/MECH.Hmean);
+    MECH.eps_II = MECH.eps_II*(FSTD.conc)*(OPTS.H_0/MECH.Hmean);
     
 end
 

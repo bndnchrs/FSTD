@@ -40,10 +40,13 @@ else
     OCEAN.Q_open = OCEAN.Q_o;
 end
 
+%% Ocean loss to lower latitudes
+OCEAN.Q_loss = -(1/OCEAN.lambda_ll) * (OCEAN.T - OCEAN.Tfrz);
+
 %%
 % The time rate of change of ocean temperature is therefore this open water
 % heat flux term, which may have been adjusted (up to 1/(cp rho H))
-OCEAN.dTdt = (1/prefac) * OCEAN.Q_open;
+OCEAN.dTdt = (1/prefac) * OCEAN.Q_open + OCEAN.Q_loss;
 
 % If there is some heat flux to the pancakes, we make them
 if OCEAN.panQ < 0 

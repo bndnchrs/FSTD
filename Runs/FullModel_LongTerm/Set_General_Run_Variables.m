@@ -13,21 +13,23 @@ EXFORC = struct();
 OPTS.runnum = runnum; 
 OPTS.NAME = NAMES{runnum};
 
-OPTS.nt = 24*2*60; % Number of timesteps
-% OPTS.nt = 1; 
-OPTS.dt = 1800; % Timestep duration
-OPTS.dr = 2; % Size increment
+OPTS.nt = 52*7*4*15; % Number of timesteps
+% OPTS.nt = 200; 
+OPTS.dt = 3600*6; % Timestep duration
+
+%% HERE %%
+OPTS.dr = 5; % Size increment
 OPTS.nh = 13; % No. thickness categories
 OPTS.dh = .2; % Thickness increment
-
 
 OPTS.time = linspace(OPTS.dt,OPTS.nt*OPTS.dt,OPTS.nt); 
 
 % Initial discretization
 RR(1) = .5;
-for i = 2:75
+for i = 2:60
     RR(i) = sqrt(2*RR(i-1)^2 - (4/5) * RR(i-1)^2);
 end
+
 OPTS.nr = length(RR); % Number of size categories
 FSTD.R = RR;
 OPTS.r_p = .5; % Minimum floe size category

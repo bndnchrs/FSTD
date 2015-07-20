@@ -2,17 +2,16 @@
 % This routing loads in the strain rate at each timestep as well as the
 % thermodynamic input
 
+if ADVECT.DO
+    % 
+    get_advect_in;
+end
 
 if MECH.DO
     % Get the strain rate
     get_strain_rate;
     
 end    
-
-if ADVECT.DO
-    % Get the flux of ice in
-    get_advect_in;
-end
 
 if THERMO.DO
     

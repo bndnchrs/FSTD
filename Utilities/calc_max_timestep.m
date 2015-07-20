@@ -27,7 +27,9 @@ if min(psitemp(:)) < 0
     
     %%
     if dt_temp <= 0
-        error(sprintf('Cut Timestep is negative, equal to %d',dt_temp))
+        
+      %  error(sprintf('Cut Timestep is negative, equal to %d',dt_temp))
+        dt_temp = 'dt';
     end
     
     
